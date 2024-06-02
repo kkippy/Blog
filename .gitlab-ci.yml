@@ -71,3 +71,5 @@ deploy-prod:
       when: manual
     - if: $CI_COMMIT_BRANCH =~ /^hotfix/
       when: manual
+  dependencies:
+    - build
