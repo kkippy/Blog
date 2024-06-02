@@ -21,13 +21,13 @@ build:
   # 通过指定runner的tag来指定运行此job的runner
   tags:
     # 数说提供的runner, build和打包阶段都必须使用这个tag的runner
-    - build:npm
+    - build:pnpm
   # 指定此job的stage
   stage: build
   # 指定此job执行的脚本
   script:
     - export NVM_NODEJS_ORG_MIRROR
-    - npm install && npm run build
+    - pnpm install && pnpm run docs:build
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
       when: always
