@@ -28,6 +28,9 @@ build:
   script:
     - export NVM_NODEJS_ORG_MIRROR
     - pnpm install && pnpm run docs:build
+  artifacts:
+    paths:
+      - dist/
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
       when: always
@@ -60,6 +63,7 @@ deploy-prod:
   stage: deploy-prod
   # 指定此job执行的脚本
   script:
+    - if [ -d ./dist ]; then echo "dist directory exists."; else echo "dist directory does not exist. Job failed."; exit 1; fi #用于提示打包的dist文件是否存在
     - ssh root@8.134.109.192 "rm -rf /mnt/blog/dist"
     - scp -r ./dist root@8.134.109.192:/mnt/blog/dist
   rules:
