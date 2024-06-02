@@ -21,7 +21,7 @@ build:
   # 通过指定runner的tag来指定运行此job的runner
   tags:
     # 数说提供的runner, build和打包阶段都必须使用这个tag的runner
-    - build:pnpm
+    - build:npm
   # 指定此job的stage
   stage: build
   # 指定此job执行的脚本
