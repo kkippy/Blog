@@ -1,0 +1,69 @@
+# 定义全局变量
+variables:
+  # -B, --batch-mode 在非交互（批处理）模式下运行(该模式下,当Maven需要输入时,它不会停下来接受用户的输入,而是使用合理的默认值)
+  # -e显示详细错误信息
+  NVM_NODEJS_ORG_MIRROR: "https://npm:taobao:org/mirrors/node"
+  GIT_CLEAN_FLAGS: none
+cache:
+  key: $CI_PROJECT_NAME
+  paths:
+    - node_modules
+  when: on_success
+# 定义pipeline的阶段, stage的执行顺序为配置文件中指定的顺序
+stages:
+  - build # 编译阶段
+  #  - package-dev # 打包
+  #  - deploy-dev
+  - deploy-prod
+
+# 定义pipeline的job, job的执行顺序和配置文件中指定的顺序无关
+build:
+  # 通过指定runner的tag来指定运行此job的runner
+  tags:
+    # 数说提供的runner, build和打包阶段都必须使用这个tag的runner
+    - build:npm
+  # 指定此job的stage
+  stage: build
+  # 指定此job执行的脚本
+  script:
+    - export NVM_NODEJS_ORG_MIRROR
+    - npm install && npm run build
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: always
+    - if: $CI_COMMIT_BRANCH =~ /^hotfix/
+      when: always
+    - if: $CI_COMMIT_BRANCH =~ /^dev/
+      when: always
+
+#deploy-dev:
+#  # 通过指定runner的tag来指定运行此job的runner
+#  tags:
+#    # 数说提供的runner, build和打包阶段都必须使用这个tag的runner
+#    - deploy:cp
+#  # 指定此job的stage
+#  stage: deploy-dev
+#  # 指定此job执行的脚本
+#  script:
+#    - rm -rf /mnt/k8s/data/important/joolun-nginx/${CI_PROJECT_NAME}/dist
+#    - cp -r ./dist /mnt/k8s/data/important/joolun-nginx/${CI_PROJECT_NAME}/dist
+#  rules:
+#    - if: $CI_COMMIT_BRANCH =~ /^dev/
+#      when: always
+
+deploy-prod:
+  # 通过指定runner的tag来指定运行此job的runner
+  tags:
+    # 数说提供的runner, build和打包阶段都必须使用这个tag的runner
+    - deploy:scp
+  # 指定此job的stage
+  stage: deploy-prod
+  # 指定此job执行的脚本
+  script:
+    - ssh root@8.134.109.192 "rm -rf /mnt/blog/dist"
+    - scp -r ./dist root@8.134.109.192:/mnt/blog/dist
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+    - if: $CI_COMMIT_BRANCH =~ /^hotfix/
+      when: manual
