@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 import { set_sidebar } from "../utils/auto_sidebar.mjs";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  outDir: '../public',
+  outDir: './public',
   head:[["link", { rel: "icon", href: "/logo.svg" }]],
   title: "KRABBY Personal Blogs",
   description: "A VitePress Site",
