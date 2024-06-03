@@ -61,7 +61,7 @@ deploy-prod:
   # 指定此job执行的脚本
   script:
     - ssh root@8.134.109.192 "rm -rf /mnt/blog/dist"
-    - scp -r ./dist root@8.134.109.192:/mnt/blog/dist
+    - rsync -avruz --delete --progress ./dist root@8.134.109.192:/mnt/blog/dist
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
       when: manual
