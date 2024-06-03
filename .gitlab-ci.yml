@@ -27,7 +27,11 @@ build:
   # 指定此job执行的脚本
   script:
     - export NVM_NODEJS_ORG_MIRROR
-    - pnpm install && pnpm run docs:build
+    - npm install && npm run docs:build
+      #产出的结果，用于deploy-prod阶段
+  artifacts:
+    paths:
+      - ./dist
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
       when: always
