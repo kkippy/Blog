@@ -3,15 +3,17 @@
 layout: home
 
 hero:
-  name: "My Awesome Project"
-  text: "A VitePress Site"
-  tagline: My great project tagline
-  actions:
+  name: "KRABBY Personal Blog"
+  #  text: "文档管理博客"
+  tagline: Think, Accumulate, and continue to learn
+  images: #网站的背景图片
+
+  actions:  #页面中部的按钮
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: 文档案例
+      link: /markdown-examples  #在根目录下寻找
     - theme: alt
-      text: API Examples
+      text: 开发笔记
       link: /api-examples
 
 features:
