@@ -31,7 +31,7 @@ build:
       #产出的结果，用于deploy-prod阶段
   artifacts:
     paths:
-      - ./public
+      - ./dist
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
       when: always
@@ -65,7 +65,7 @@ deploy-prod:
   # 指定此job执行的脚本
   script:
     - ssh root@8.134.109.192 "rm -rf /mnt/blog"
-    - rsync -avruz --delete --progress ./public root@8.134.109.192:/mnt/blog
+    - rsync -avruz --delete --progress ./dist root@8.134.109.192:/mnt/blog
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
       when: manual
