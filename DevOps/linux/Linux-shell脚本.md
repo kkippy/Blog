@@ -1,4 +1,12 @@
-<br>
+---
+prev:
+  text: 'Linux软件包管理'
+  link: '/DevOps/linux/Linux软件包管理'
+
+next:
+  text: 'Linux-vim编辑器'
+  link: '/DevOps/linux/Linux-vim编辑器'
+---
 
 >Shell 脚本（shell script），是一种为 shell 编写的脚本程序。它有众多的分类，例如C Shell（/usr/bin/csh）、K Shell（/usr/bin/ksh）、Bourne Shell（/usr/bin/sh或/bin/sh）、Bourne Again Shell（/bin/bash）等。在国内，使用广泛的是Bourne Again Shell（即bash）
 

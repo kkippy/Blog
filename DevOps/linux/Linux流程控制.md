@@ -1,4 +1,12 @@
-<br>
+---
+prev:
+  text: 'Linux服务管理'
+  link: '/DevOps/linux/Linux服务管理'
+
+next:
+  text: 'Linux磁盘分区及挂载'
+  link: '/DevOps/linux/Linux磁盘分区及挂载'
+---
 
 >针对不同情况，需要执行不同的代码。这在编程中是非常常见的。而在Linux的shell脚本中也存在这样的流程控制。包括if else、case、for、while等，本文对常见的流程控制加以介绍。
 需要注意的是，不论是哪种流程控制语句，**在其条件判断的方括号内，首尾必须要有空格**，这是和其他语言不太一样的地方。详情见下列的具体介绍。

@@ -1,11 +1,12 @@
 ---
-title: 基本语法
 prev:
   text: 'linux介绍'
   link: '/DevOps/linux/index'
----
 
-<br>
+next:
+  text: 'Linux定时任务调度'
+  link: '/DevOps/linux/Linux定时任务调度'
+---
 
 > 在 shell 脚本中，也存在着多种运算符，例如算数运算符、关系运算符、布尔运算符等。
 > 原生 bash 不支持简单的数学运算，但是可以通过其他指令来实现，例如 awk 和 expr，expr 命令最常用。expr 命令是一个手工命令行计数器，用于在 Linux 中求表达式变量的值，一般用于整数值，也可用于字符串。

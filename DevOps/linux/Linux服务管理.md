@@ -1,9 +1,13 @@
 ---
-title: 查看服务
+prev:
+  text: 'Linux定时任务调度'
+  link: '/DevOps/linux/Linux定时任务调度'
+
+next:
+  text: 'Linux流程控制'
+  link: '/DevOps/linux/Linux流程控制'
 ---
 
-<br>
-<br>
 
 > 服务的本质就是进程，但是运行在后台的，通常监听某个端口，等待其他程序的请求，所以又称守护进程。可使用 service [服务名] [start | stop | resrart | reload | status]。当然在 centos7 之后使用`systemctl`命令代替`service`命令，本文着重介绍`systemctl`命令。
 

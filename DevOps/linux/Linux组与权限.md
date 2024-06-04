@@ -1,5 +1,11 @@
 ---
-title: 组与权限
+prev:
+  text: 'Linux磁盘分区及挂载'
+  link: '/DevOps/linux/Linux磁盘分区及挂载'
+
+next:
+  text: 'Linux软件包管理'
+  link: '/DevOps/linux/Linux软件包管理'
 ---
 
 > 在 Linux 中，每个用户必须属于一个组，每个文件都有所有者、所在组、其他组的概念。这是基于万物皆文件的基础之上的，因为文件的至关重要性，文件之间的关系也就变得同等重要了。
