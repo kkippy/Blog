@@ -16,21 +16,30 @@ export default defineConfig({
     nav: [
       { text: '主页', link: '/' },
       { text: '前端',   items: [  //启用items即为展示下拉框
-          { text: 'HTML', link: '/fontEnd/html' },
-          { text: 'CSS', link: '/fontEnd/css' },
-          { text: 'JavaScript', link: '/fontEnd/js' },
-          { text: 'TypeScript', link: '/fontEnd/ts' },
+          { text: 'HTML', link: '/fontEnd/html/' },
+          { text: 'CSS', link: '/fontEnd/css/' },
+          { text: 'JavaScript', link: '/fontEnd/js/' },
+          { text: 'TypeScript', link: '/fontEnd/ts/' },
+          { text: 'Vue', link: '/fontEnd/vue/' },
+          { text: '浏览器与网络', link: '/fontEnd/network/' },
+          { text: '组件', link: '/fontEnd/components/' },
         ]
       },
       { text: 'DevOps', items: [
           { text: 'Linux', link: '/DevOps/linux/' },
           { text: 'Docker', link: '/DevOps/docker/' },
           { text: 'Nginx ', link: '/DevOps/nginx/' },
+          { text: 'CI-CD ', link: '/DevOps/ci-cd/' },
         ]
       },
       { text: '笔面试', items: [
           { text: '笔试', link: '/exam/written/' },
           { text: '面试', link: '/exam/interview/' },
+        ]
+      },
+      { text: '开发工具', items: [
+          { text: 'Git', link: '/tool/git/' },
+          { text: 'ApiFox', link: '/tool/apifox/' },
         ]
       },
     ],
