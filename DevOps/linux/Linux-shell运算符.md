@@ -1,11 +1,11 @@
 ---
 prev:
-  text: 'linux介绍'
-  link: '/DevOps/linux/index'
+  text: 'Linux-shell脚本'
+  link: '/DevOps/linux/Linux-shell脚本'
 
 next:
-  text: 'Linux定时任务调度'
-  link: '/DevOps/linux/Linux定时任务调度'
+  text: 'Linux-vim编辑器'
+  link: '/DevOps/linux/Linux-vim编辑器'
 ---
 
 > 在 shell 脚本中，也存在着多种运算符，例如算数运算符、关系运算符、布尔运算符等。

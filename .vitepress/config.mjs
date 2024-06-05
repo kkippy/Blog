@@ -24,8 +24,8 @@ export default defineConfig({
       },
       { text: 'DevOps', items: [
           { text: 'Linux', link: '/DevOps/linux/' },
-          { text: 'Docker', link: '/DevOps/docker' },
-          { text: 'Nginx ', link: '/DevOps/nginx' },
+          { text: 'Docker', link: '/DevOps/docker/' },
+          { text: 'Nginx ', link: '/DevOps/nginx/' },
         ]
       },
       { text: '笔面试', items: [

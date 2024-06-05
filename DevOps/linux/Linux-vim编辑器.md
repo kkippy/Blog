@@ -1,11 +1,11 @@
 ---
 prev:
-  text: 'Linux-shell脚本'
-  link: '/DevOps/linux/Linux-shell脚本'
+  text: 'Linux-shell运算符'
+  link: '/DevOps/linux/Linux-shell运算符'
 
-#next:
-#  text: 'Linux：vim编辑器'
-#  link: '/DevOps/linux/Linux：vim编辑器'
+next:
+  text: 'Linux定时任务调度'
+  link: '/DevOps/linux/Linux定时任务调度'
 ---
 
 > 在Linux中，当我们需要编辑文件时，就会使用到vi与vim。vi是Linux内置的文本编辑器，而vim可以看做是vi的升级版本，提供代码补全、颜色区分、错误跳转等编辑功能，被广泛的运用在日常开发中。本文就来着重介绍vim

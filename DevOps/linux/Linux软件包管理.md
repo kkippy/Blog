@@ -3,9 +3,9 @@ prev:
   text: 'Linux组与权限'
   link: '/DevOps/linux/Linux组与权限'
 
-next:
-  text: 'Linux-shell脚本'
-  link: '/DevOps/linux/Linux-shell脚本'
+#next:
+#  text: 'Linux-shell脚本'
+#  link: '/DevOps/linux/Linux-shell脚本'
 ---
 
 ## rpm

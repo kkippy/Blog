@@ -1,7 +1,7 @@
 ---
 prev:
-  text: 'Linux-shell运算符'
-  link: '/DevOps/linux/Linux-shell运算符'
+  text: 'Linux-vim编辑器'
+  link: '/DevOps/linux/Linux-vim编辑器'
 
 next:
   text: 'Linux服务管理'
