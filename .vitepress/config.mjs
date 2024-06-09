@@ -16,13 +16,13 @@ export default defineConfig({
     nav: [
       { text: '主页', link: '/' },
       { text: '前端',   items: [  //启用items即为展示下拉框
-          { text: 'HTML', link: '/fontEnd/html/' },
-          { text: 'CSS', link: '/fontEnd/css/' },
-          { text: 'JavaScript', link: '/fontEnd/js/' },
-          { text: 'TypeScript', link: '/fontEnd/ts/' },
-          { text: 'Vue', link: '/fontEnd/vue/' },
-          { text: '浏览器与网络', link: '/fontEnd/network/' },
-          { text: '组件', link: '/fontEnd/components/' },
+          { text: 'HTML', link: '/frontEnd/html/' },
+          { text: 'CSS', link: '/frontEnd/css/' },
+          { text: 'JavaScript', link: '/frontEnd/js/' },
+          { text: 'TypeScript', link: '/frontEnd/ts/' },
+          { text: 'Vue', link: '/frontEnd/vue/' },
+          { text: '浏览器与网络', link: '/frontEnd/network/' },
+          { text: '组件', link: '/frontEnd/components/' },
         ]
       },
       { text: 'DevOps', items: [
@@ -50,7 +50,10 @@ export default defineConfig({
     footer:{
       copyright:'Copyright @ 2024 KRABBY'
     },
-    sidebar: { "/DevOps/linux": set_sidebar("DevOps/linux") },
+    sidebar: {
+        "/DevOps/linux": set_sidebar("DevOps/linux"),
+        "/frontEnd/html": set_sidebar("frontEnd/html"),
+    },
     // 设置搜索框的样式
     search: {
       provider: "local",
