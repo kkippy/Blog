@@ -4,7 +4,7 @@ variables:
   # -e显示详细错误信息
   NVM_NODEJS_ORG_MIRROR: "https://npm:taobao:org/mirrors/node"
   GIT_CLEAN_FLAGS: none
-  REPO_URL: $REPO_URL
+  REPO_URL: "http://111.230.13.178:8111"
 cache:
   key: $CI_PROJECT_NAME
   paths:
