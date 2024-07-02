@@ -28,7 +28,7 @@ build:
   # 指定此job执行的脚本
   script:
     - export NVM_NODEJS_ORG_MIRROR
-    - git remote set-url origin http://111.230.13.178/blog/my_blog.git
+    - git remote set-url origin http://111.230.13.178:8111/blog/my_blog.git
     - npm install && npm run docs:build
 
       #产出的结果，用于deploy-prod阶段
