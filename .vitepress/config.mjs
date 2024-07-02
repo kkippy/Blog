@@ -54,6 +54,7 @@ export default defineConfig({
         "/DevOps/linux": set_sidebar("DevOps/linux"),
         "/frontEnd/html": set_sidebar("frontEnd/html"),
         "/frontEnd/js": set_sidebar("frontEnd/js"),
+        "/frontEnd/ts": set_sidebar("frontEnd/ts"),
     },
     // 设置搜索框的样式
     search: {
