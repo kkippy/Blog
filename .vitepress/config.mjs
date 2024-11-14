@@ -6,7 +6,16 @@ export default defineConfig({
   head:[["link", { rel: "icon", href: "/logo.svg" }]],
   title: "KRABBY Personal Blogs",
   description: "A VitePress Site",
-  // navbar: true,
+  search: {
+    provider: 'local'
+  },
+  markdown: {
+    image: {
+        // 图片懒加载
+        lazyLoading: true
+    }
+  },
+  navbar: true,
   themeConfig: {
     docFooter: { prev: '上一篇', next: '下一篇' },
     logo: '/logo.svg',
@@ -52,6 +61,7 @@ export default defineConfig({
     },
     sidebar: {
         "/DevOps/linux": set_sidebar("DevOps/linux"),
+        "/DevOps/docker": set_sidebar("DevOps/docker"),
         "/frontEnd/html": set_sidebar("frontEnd/html"),
         "/frontEnd/js": set_sidebar("frontEnd/js"),
         "/frontEnd/ts": set_sidebar("frontEnd/ts"),
