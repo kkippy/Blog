@@ -4,8 +4,8 @@ prev:
   link: '/DevOps/docker/index'
 
 next:
-  text: 'Linux-shell运算符'
-  link: '/DevOps/linux/Linux-shell运算符'
+  text: '初始安装及基础命令'
+  link: '/DevOps/docker/初始安装及基础命令'
 ---
 ## 是什么
 解决了运行环境和配置问题的软件容器（直接将配置文件及环境等打包成ISO映像文件）
