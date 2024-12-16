@@ -9,6 +9,13 @@ export default defineConfig({
   search: {
     provider: 'local'
   },
+  lastUpdated: {
+      text: '文章最后更新于',
+      formatOptions: {
+          dateStyle: 'full',
+          timeStyle: 'medium'
+      }
+  },
   markdown: {
     image: {
         // 图片懒加载

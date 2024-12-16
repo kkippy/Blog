@@ -11,7 +11,7 @@ next:
 
 > 服务的本质就是进程，但是运行在后台的，通常监听某个端口，等待其他程序的请求，所以又称守护进程。可使用 service [服务名] [start | stop | resrart | reload | status]。当然在 centos7 之后使用`systemctl`命令代替`service`命令，本文着重介绍`systemctl`命令。
 
-## 查看服务
+# 查看服务
 
 可以使用`setup`命令查看到所有服务，其中前面有`*`号的任务则表示该任务会随着 Linux 的启动而启动，没有带`*`号则需要手动启动。下图是输入`setup`命令后的界面。
 

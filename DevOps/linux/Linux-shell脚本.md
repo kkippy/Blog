@@ -10,7 +10,7 @@ next:
 
 >Shell 脚本（shell script），是一种为 shell 编写的脚本程序。它有众多的分类，例如C Shell（/usr/bin/csh）、K Shell（/usr/bin/ksh）、Bourne Shell（/usr/bin/sh或/bin/sh）、Bourne Again Shell（/bin/bash）等。在国内，使用广泛的是Bourne Again Shell（即bash）
 
-## shell脚本格式要求
+# shell脚本格式要求
 - 脚本文件的后缀通常以`.sh`结尾，例如test.sh
 - 脚本内容以#!/bin/bash 开头
 - 脚本需要有可执行权限

@@ -10,7 +10,7 @@ next:
 
 > 在Linux中，当我们需要编辑文件时，就会使用到vi与vim。vi是Linux内置的文本编辑器，而vim可以看做是vi的升级版本，提供代码补全、颜色区分、错误跳转等编辑功能，被广泛的运用在日常开发中。本文就来着重介绍vim
 
-## 常用模式
+# 常用模式
 在vim中，有三种常用的模式。分别是正常模式、插入模式、命令行模式
 <p align='center'>
 <img src="https://img2.imgtp.com/2024/05/12/umNtSelc.png"  />

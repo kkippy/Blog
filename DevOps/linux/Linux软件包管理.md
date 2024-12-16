@@ -8,7 +8,7 @@ prev:
 #  link: '/DevOps/linux/Linux-shell脚本'
 ---
 
-## rpm
+# rpm
 rpm包管理器（RPM）（最初是Red Hat Package Manager，现在是递归首字母缩写）是一个免费的开源包管理系统。RPM是指.rpm文件格式和包管理器程序本身。RPM主要用于Linux发行版;其常用的命令如下：
 1.  rpm -qa | grep xxx : 用来查询已安装的rpm列表并过滤显示指定名称的rpm
 2.  rpm -q [软件包名] ： 查询指定包是否安装
