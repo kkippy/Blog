@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import sidebar from "../utils/sidebar.mjs";
 import { set_sidebar } from "../utils/auto_sidebar.mjs";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -77,15 +78,15 @@ export default defineConfig({
     footer:{
       copyright:'Copyright @ 2024 KRABBY'
     },
-    sidebar: {
-        "/DevOps/linux": set_sidebar("DevOps/linux"),
-        "/DevOps/docker": set_sidebar("DevOps/docker"),
-        "/frontEnd/html": set_sidebar("frontEnd/html"),
-        "/frontEnd/js": set_sidebar("frontEnd/js"),
-        "/frontEnd/ts": set_sidebar("frontEnd/ts"),
-    },
-      //   sidebar:false,
-      //     //   aside:"left",
+    // sidebar: {
+    //     "/DevOps/linux": set_sidebar("DevOps/linux"),
+    //     "/DevOps/docker": set_sidebar("DevOps/docker"),
+    //     "/frontEnd/html": set_sidebar("frontEnd/html"),
+    //     "/frontEnd/js": set_sidebar("frontEnd/js"),
+    //     "/frontEnd/ts": set_sidebar("frontEnd/ts"),
+    // },
+        sidebar:sidebar,
+      // aside:"left",
 
     // 设置搜索框的样式
     search: {
