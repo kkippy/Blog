@@ -5,7 +5,7 @@ prev:
   
 next:
   text: '三主三从redis集群扩缩容配置'
-  link: '/DevOps/docker/基础命令2'
+  link: '/DevOps/docker/三主三从redis集群扩缩容配置'
 ---
 
 # 预期效果

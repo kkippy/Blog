@@ -136,6 +136,27 @@
 .DocSearch {
   --docsearch-primary-color: var(--vp-c-brand-1) !important;
 }
+.VPDoc.has-aside .content-container {
+    max-width: 54vw !important;
+}
+.aside {
+    max-width: 200px!important;
+}
+
+.VPSidebar {
+    padding-left: 1vw!important;
+    width: auto!important;
+}
+
+.VPNavBar.has-sidebar .title {
+    padding-left: .5vw!important;
+    width: 20vw;!important;
+}
+.VPNavBarTitle.has-sidebar .title{
+    border-bottom-color: transparent!important;
+
+}
+
 
 /* 自定义侧边栏在最左边，右边撑满宽度 */
 /*.VPDoc .container {*/
