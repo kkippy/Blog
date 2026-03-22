@@ -1,4 +1,7 @@
-/node_modules/
-.idea
-./dist
-./.vitepress/cache
+node_modules/
+dist/
+.vitepress/cache/
+.npm-cache/
+.vitepress-dev.log
+.vitepress-dev.err.log
+.idea/

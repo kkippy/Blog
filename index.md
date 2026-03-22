@@ -10,11 +10,11 @@ hero:
       src: /avatar.png
   actions:  #页面中部的按钮
     - theme: brand
-      text: 文档案例
-      link: /markdown-examples  #在根目录下寻找
+      text: 前端笔记
+      link: /frontEnd/js/
     - theme: alt
-      text: 开发笔记
-      link: /api-examples
+      text: 运维笔记
+      link: /DevOps/docker/
 
 features:
   - icon: 🧙
