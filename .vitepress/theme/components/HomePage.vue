@@ -5,15 +5,6 @@ const proofPoints = [
   { value: 'Now', label: '正在整理 Promise 面试题' },
 ]
 
-const brandTags = [
-  'Interview Notes',
-  'Frontend Fundamentals',
-  'DevOps Practice',
-  'Structured Knowledge',
-  'Personal Brand',
-  'Readable Writing',
-]
-
 const columns = [
   {
     index: '01',
@@ -65,12 +56,6 @@ const latestEntries = [
     link: '/frontEnd/js/let、const、var三剑客',
     desc: '从作用域和变量提升理解声明方式的真实差异。',
   },
-]
-
-const principles = [
-  '先收集，再重写，把零散笔记改造成可以复习的文档。',
-  '优先整理高频、高复用知识，而不是只记录过程。',
-  '坚持结构化输出：概念、规则、示例、易错点。',
 ]
 </script>
 
@@ -137,13 +122,6 @@ const principles = [
       </div>
     </section>
 
-    <section class="signature-ribbon">
-      <p class="signature-ribbon__label">Focus Map</p>
-      <div class="signature-ribbon__tags">
-        <span v-for="tag in brandTags" :key="tag">{{ tag }}</span>
-      </div>
-    </section>
-
     <section class="signature-grid signature-grid--primary">
       <a class="spotlight-card" :href="featuredEntry.link">
         <p class="spotlight-card__eyebrow">Featured Reading</p>
@@ -173,15 +151,25 @@ const principles = [
     </section>
 
     <section class="signature-grid signature-grid--secondary">
-      <div class="manifesto-panel">
+      <div class="about-panel">
         <div class="section-heading">
-          <p>Writing Method</p>
-          <h2>博客的目标不是堆积，而是形成可反复调用的认知资产。</h2>
+          <p>About</p>
+          <h2>写博客的人</h2>
         </div>
 
-        <ol class="principle-list">
-          <li v-for="item in principles" :key="item">{{ item }}</li>
-        </ol>
+        <div class="about-panel__body">
+          <img class="about-panel__avatar" src="/avatar.png" alt="KRABBY avatar" />
+          <div class="about-panel__text">
+            <p>
+              前端 + DevOps 双料选手，相信"不会就学，就这么简单"。
+              这个博客是我的知识管理方法：先收集，再重写，把零散笔记变成可以反复调用的认知资产。
+            </p>
+            <div class="about-panel__links">
+              <a href="https://github.com/kkippy" target="_blank" rel="noopener noreferrer">GitHub 主页</a>
+              <a href="/exam/interview/">从精选内容开始读</a>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="entry-panel">
@@ -205,7 +193,7 @@ const principles = [
     <section class="signature-cta">
       <p class="signature-cta__eyebrow">Next</p>
       <div class="signature-cta__content">
-        <h2>接下来，这里会继续向“前端基础 + DevOps + 面试整理”的品牌方向收拢。</h2>
+        <h2>接下来，这里会继续向"前端基础 + DevOps + 面试整理"的品牌方向收拢。</h2>
         <a href="/exam/interview/">从面试题部分开始阅读</a>
       </div>
     </section>
