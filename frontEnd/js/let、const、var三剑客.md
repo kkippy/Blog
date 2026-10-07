@@ -2,10 +2,6 @@
 prev:
   text: '章节介绍'
   link: '/frontEnd/js/index'
-
-next:
-  text: 'Linux-vim编辑器'
-  link: '/frontEnd/js/js的两大类型'
 ---
 
 # let、const、var之间的区别

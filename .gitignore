@@ -5,3 +5,6 @@ dist/
 .vitepress-dev.log
 .vitepress-dev.err.log
 .idea/
+
+# logs
+*.log
