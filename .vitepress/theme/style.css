@@ -1,63 +1,58 @@
-/**
- * Customize default theme styling by overriding CSS variables:
- * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
- */
 
 /**
- * Colors
+ * 设计令牌（Design Tokens）
  *
- * Each colors have exact same color scale system with 3 levels of solid
- * colors with different brightness, and 1 soft color.
- *
- * - `XXX-1`: The most solid color used mainly for colored text. It must
- *   satisfy the contrast ratio against when used on top of `XXX-soft`.
- *
- * - `XXX-2`: The color used mainly for hover state of the button.
- *
- * - `XXX-3`: The color for solid background, such as bg color of the button.
- *   It must satisfy the contrast ratio with pure white (#ffffff) text on
- *   top of it.
- *
- * - `XXX-soft`: The color used for subtle background such as custom container
- *   or badges. It must satisfy the contrast ratio when putting `XXX-1` colors
- *   on top of it.
- *
- *   The soft color must be semi transparent alpha channel. This is crucial
- *   because it allows adding multiple "soft" colors on top of each other
- *   to create a accent, such as when having inline code block inside
- *   custom containers.
- *
- * - `default`: The color used purely for subtle indication without any
- *   special meanings attched to it such as bg color for menu hover state.
- *
- * - `brand`: Used for primary brand colors, such as link text, button with
- *   brand theme, etc.
- *
- * - `tip`: Used to indicate useful information. The default theme uses the
- *   brand color for this by default.
- *
- * - `warning`: Used to indicate warning to the users. Used in custom
- *   container, badges, etc.
- *
- * - `danger`: Used to show error, or dangerous message to the users. Used
- *   in custom container, badges, etc.
+ * 全站颜色统一收敛为 --kr-* 语义化令牌：
+ * 组件只引用令牌，明暗两套主题通过切换令牌值实现。
+ * VitePress 主题变量映射到令牌，保证默认组件与自定义组件观感一致。
  * -------------------------------------------------------------------------- */
 
 :root {
+  /* 纸面层次 */
+  --kr-body-bg:
+    radial-gradient(circle at top, rgba(230, 235, 230, 0.72), transparent 42%),
+    linear-gradient(180deg, #f6f2e9 0%, #f8f6ef 52%, #f1f4ef 100%);
+  --kr-card: var(--kr-card);
+  --kr-card-solid: #fffdf8;
+  --kr-popover: var(--kr-popover);
+  --kr-tag: var(--kr-tag);
+  --kr-nav-bg: var(--kr-nav-bg);
+  --kr-portrait-1: var(--kr-portrait-1);
+  --kr-portrait-2: var(--kr-portrait-2);
+
+  /* 墨色文字 */
+  --kr-ink-1: #173129;
+  --kr-ink-2: var(--kr-ink-2);
+  --kr-ink-3: var(--kr-ink-3);
+
+  /* 品牌色与强调色 */
+  --kr-brand: var(--kr-brand);
+  --kr-brand-2: #2e7a6a;
+  --kr-brand-3: #134237;
+  --kr-brand-soft: rgba(46, 122, 106, 0.14);
+  --kr-accent: var(--kr-accent);
+  --kr-accent-soft: var(--kr-accent-soft);
+
+  /* 线条与阴影 */
+  --kr-line: var(--kr-line);
+  --kr-line-2: rgba(24, 47, 41, 0.12);
+  --kr-shadow: var(--kr-shadow);
+
+  /* VitePress 主题变量映射 */
   --vp-c-default-1: #27453d;
   --vp-c-default-2: #36584f;
   --vp-c-default-3: #4d6f66;
   --vp-c-default-soft: rgba(77, 111, 102, 0.12);
 
-  --vp-c-brand-1: #1c5a4d;
-  --vp-c-brand-2: #2e7a6a;
-  --vp-c-brand-3: #134237;
-  --vp-c-brand-soft: rgba(46, 122, 106, 0.14);
+  --vp-c-brand-1: var(--kr-brand);
+  --vp-c-brand-2: var(--kr-brand-2);
+  --vp-c-brand-3: var(--kr-brand-3);
+  --vp-c-brand-soft: var(--kr-brand-soft);
 
-  --vp-c-tip-1: #1c5a4d;
-  --vp-c-tip-2: #2e7a6a;
-  --vp-c-tip-3: #134237;
-  --vp-c-tip-soft: rgba(46, 122, 106, 0.14);
+  --vp-c-tip-1: var(--kr-brand);
+  --vp-c-tip-2: var(--kr-brand-2);
+  --vp-c-tip-3: var(--kr-brand-3);
+  --vp-c-tip-soft: var(--kr-brand-soft);
 
   --vp-c-warning-1: #9b6520;
   --vp-c-warning-2: #b27b34;
@@ -70,17 +65,7 @@
   --vp-c-danger-soft: rgba(226, 130, 117, 0.18);
 
   --vp-layout-max-width: 1440px;
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: linear-gradient(120deg, #113f34 20%, #ce9347 95%);
-  --vp-home-hero-image-background-image: radial-gradient(circle at center, rgba(19, 66, 55, 0.18), rgba(206, 147, 71, 0.12));
-  --vp-home-hero-image-filter: blur(50px);
-}
 
-/**
- * Component: Button
- * -------------------------------------------------------------------------- */
-
-:root {
   --vp-button-brand-border: transparent;
   --vp-button-brand-text: var(--vp-c-white);
   --vp-button-brand-bg: var(--vp-c-brand-3);
@@ -90,29 +75,7 @@
   --vp-button-brand-active-border: transparent;
   --vp-button-brand-active-text: var(--vp-c-white);
   --vp-button-brand-active-bg: var(--vp-c-brand-1);
-}
 
-/**
- * Component: Home
- * -------------------------------------------------------------------------- */
-
-@media (min-width: 640px) {
-  :root {
-    --vp-home-hero-image-filter: blur(56px);
-  }
-}
-
-@media (min-width: 960px) {
-  :root {
-    --vp-home-hero-image-filter: blur(68px);
-  }
-}
-
-/**
- * Component: Custom Block
- * -------------------------------------------------------------------------- */
-
-:root {
   --vp-custom-block-tip-border: transparent;
   --vp-custom-block-tip-text: var(--vp-c-text-1);
   --vp-custom-block-tip-bg: var(--vp-c-brand-soft);
@@ -120,41 +83,84 @@
 }
 
 /**
- * Component: Algolia
+ * 暗色主题：深墨绿纸面 + 米白墨色 + 琥珀点缀
  * -------------------------------------------------------------------------- */
+
+.dark {
+  --kr-body-bg:
+    radial-gradient(circle at top, rgba(46, 90, 78, 0.2), transparent 45%),
+    linear-gradient(180deg, #0e1a17 0%, #10201b 55%, #0c1714 100%);
+  --kr-card: rgba(26, 41, 35, 0.66);
+  --kr-card-solid: #16241f;
+  --kr-popover: rgba(22, 36, 31, 0.96);
+  --kr-tag: rgba(233, 228, 216, 0.07);
+  --kr-nav-bg: rgba(13, 24, 21, 0.82);
+  --kr-portrait-1: rgba(30, 48, 41, 0.9);
+  --kr-portrait-2: rgba(19, 32, 27, 0.9);
+
+  --kr-ink-1: #e9e3d6;
+  --kr-ink-2: #a9bab2;
+  --kr-ink-3: #7f918a;
+
+  --kr-brand: #55ab92;
+  --kr-brand-2: #6cbfa6;
+  --kr-brand-3: #1d4a40;
+  --kr-brand-soft: rgba(85, 171, 146, 0.16);
+  --kr-accent: #d8a45f;
+  --kr-accent-soft: rgba(216, 164, 95, 0.14);
+
+  --kr-line: rgba(233, 228, 216, 0.09);
+  --kr-line-2: rgba(233, 228, 216, 0.14);
+  --kr-shadow: rgba(0, 0, 0, 0.35);
+
+  --vp-c-bg: #0e1a17;
+  --vp-c-bg-soft: #13221d;
+  --vp-c-bg-elv: #16241f;
+  --vp-c-bg-alt: #0b1512;
+
+  --vp-c-text-1: var(--kr-ink-1);
+  --vp-c-text-2: var(--kr-ink-2);
+  --vp-c-text-3: var(--kr-ink-3);
+
+  --vp-c-divider: var(--kr-line);
+  --vp-c-gutter: var(--kr-line);
+
+  --vp-code-block-bg: #0b1512;
+
+  --vp-c-warning-1: #d8a45f;
+  --vp-c-warning-2: #c78f45;
+  --vp-c-warning-3: #a9762f;
+  --vp-c-warning-soft: rgba(216, 164, 95, 0.16);
+
+  --vp-c-danger-1: #e28275;
+  --vp-c-danger-2: #cf6a5d;
+  --vp-c-danger-3: #bb5a4e;
+  --vp-c-danger-soft: rgba(226, 130, 117, 0.16);
+}
+
+/* 亮色模式下正文文字颜色走令牌 */
+:root {
+  --vp-c-text-1: var(--kr-ink-1);
+  --vp-c-text-2: var(--kr-ink-2);
+  --vp-c-text-3: var(--kr-ink-3);
+  --vp-c-divider: var(--kr-line);
+  --vp-c-gutter: var(--kr-line);
+}
 
 .DocSearch {
   --docsearch-primary-color: var(--vp-c-brand-1) !important;
 }
-/* 以下布局覆盖仅适用于桌面端；移动端保持主题默认布局，
-   否则正文会被 54vw 限制成约 200px 的窄栏 */
+
+/* 桌面端正文栏宽固定，保证中文每行 32-38 字的舒适行长；
+   移动端保持主题默认布局（此前 54vw 会把手机正文挤成约 200px） */
 @media (min-width: 960px) {
   .VPDoc.has-aside .content-container {
-    max-width: 54vw !important;
-  }
-  .aside {
-    max-width: 200px !important;
-  }
-
-  .VPSidebar {
-    padding-left: 1vw !important;
-    width: auto !important;
-  }
-
-  .VPNavBar.has-sidebar .title {
-    padding-left: 0.5vw !important;
-    width: 20vw !important;
-  }
-  .VPNavBarTitle.has-sidebar .title {
-    border-bottom-color: transparent !important;
+    max-width: 44rem !important;
   }
 }
-
 body {
-    background:
-        radial-gradient(circle at top, rgba(230, 235, 230, 0.72), transparent 42%),
-        linear-gradient(180deg, #f6f2e9 0%, #f8f6ef 52%, #f1f4ef 100%);
-    color: #18332c;
+    background: var(--kr-body-bg);
+    color: var(--kr-ink-1);
     font-family: "Avenir Next", "SF Pro Text", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
@@ -167,9 +173,9 @@ body {
 }
 
 .VPNavBar {
-    background: rgba(248, 245, 238, 0.84) !important;
+    background: var(--kr-nav-bg) !important;
     backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(24, 51, 44, 0.08) !important;
+    border-bottom: 1px solid var(--kr-line) !important;
 }
 
 .VPNavBar .content {
@@ -197,33 +203,33 @@ body {
 
 .VPNavBarMenuLink:hover,
 .VPFlyout .button:hover {
-    background: rgba(28, 90, 77, 0.07);
+    background: var(--kr-brand-soft);
     transform: translateY(-1px);
 }
 
 .VPNavBarMenuLink.active {
-    background: rgba(28, 90, 77, 0.1);
-    color: #173d34;
+    background: var(--kr-brand-soft);
+    color: var(--kr-ink-1);
 }
 
 .VPFlyout .menu {
-    border: 1px solid rgba(24, 47, 41, 0.08) !important;
+    border: 1px solid var(--kr-line) !important;
     border-radius: 18px !important;
-    background: rgba(255, 252, 246, 0.95) !important;
-    box-shadow: 0 18px 40px rgba(18, 34, 29, 0.08) !important;
+    background: var(--kr-popover) !important;
+    box-shadow: 0 18px 40px var(--kr-shadow) !important;
     backdrop-filter: blur(16px);
 }
 
 .VPNavBarSearch .DocSearch-Button {
     border-radius: 999px !important;
-    border: 1px solid rgba(24, 47, 41, 0.08) !important;
-    background: rgba(255, 255, 255, 0.68) !important;
+    border: 1px solid var(--kr-line) !important;
+    background: var(--kr-card) !important;
 }
 
 .VPSocialLinks .VPSocialLink {
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.52);
-    border: 1px solid rgba(24, 47, 41, 0.08);
+    background: var(--kr-card);
+    border: 1px solid var(--kr-line);
 }
 
 .VPNavBarMenuLink,
@@ -233,13 +239,13 @@ body {
 }
 
 .VPButton.brand {
-    box-shadow: 0 14px 28px rgba(19, 66, 55, 0.14);
+    box-shadow: 0 14px 28px var(--kr-shadow);
 }
 
 .vp-doc a,
 .vp-doc a > code,
 .VPNavBarMenuLink.active {
-    color: #1c5a4d;
+    color: var(--kr-brand);
 }
 
 .vp-doc h1,
@@ -252,6 +258,82 @@ body {
     letter-spacing: -0.02em;
 }
 
+/**
+ * 阅读排印：中文长文的字体、行长与节奏
+ * 大标题用衬线体营造编辑感，正文保持黑体保证屏显清晰度
+ * -------------------------------------------------------------------------- */
+
+:root {
+  --kr-font-serif: "Iowan Old Style", "Palatino Linotype", "Songti SC", "STSong", "Noto Serif SC", "SimSun", serif;
+}
+
+/* 文章标题：衬线 */
+.vp-doc > h1,
+.vp-doc > h2 {
+    font-family: var(--kr-font-serif);
+    letter-spacing: 0;
+}
+
+/* h2 左侧品牌渐变竖条，替代默认的顶部灰线 */
+.vp-doc > h2 {
+    position: relative;
+    margin-top: 2.2em;
+    padding-top: 0;
+    padding-left: 14px;
+    border-top: none;
+}
+
+.vp-doc > h2::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.18em;
+    bottom: 0.18em;
+    width: 4px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--kr-brand), var(--kr-accent));
+}
+
+/* 正文：更松的行高与微字距，适合中文长读 */
+.vp-doc > p,
+.vp-doc > ul li,
+.vp-doc > ol li,
+.vp-doc > blockquote p {
+    line-height: 1.85;
+    letter-spacing: 0.012em;
+}
+
+.vp-doc > p {
+    margin: 18px 0;
+}
+
+/* 选中文字用琥珀色浅底 */
+::selection {
+    background: var(--kr-accent-soft);
+}
+
+/* 锚点跳转平滑滚动 */
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* 暗色模式下图片放大遮罩跟随主题 */
+.dark .medium-zoom-overlay {
+    background: rgba(10, 20, 17, 0.94) !important;
+}
+
+/* 暗色模式下主按钮提亮一档并加描边，避免融入深色背景 */
+.dark .signature-home .hero-button--primary {
+    background: linear-gradient(135deg, #245447, #2f6152);
+    border: 1px solid var(--kr-line-2);
+}
+
 
 .signature-home {
     position: relative;
@@ -259,7 +341,7 @@ body {
     margin: 0 auto;
     max-width: 1280px;
     padding: 40px 24px 96px;
-    color: #19332d;
+    color: var(--kr-ink-1);
     font-family: "Avenir Next", "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
     line-break: strict;
     word-break: keep-all;
@@ -281,7 +363,7 @@ body {
     width: 320px;
     height: 320px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(198, 153, 91, 0.16) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--kr-accent-soft) 0%, transparent 70%);
 }
 
 .signature-home::after {
@@ -290,11 +372,10 @@ body {
     width: 420px;
     height: 420px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(28, 90, 77, 0.12) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--kr-brand-soft) 0%, transparent 70%);
 }
 
 .signature-home .signature-hero,
-.signature-home .signature-ribbon,
 .signature-home .signature-grid,
 .signature-home .signature-cta {
     position: relative;
@@ -303,20 +384,16 @@ body {
     animation: signature-fade-up 0.72s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.signature-home .signature-ribbon {
-    animation-delay: 0.08s;
-}
-
 .signature-home .signature-grid--primary {
-    animation-delay: 0.16s;
+    animation-delay: 0.1s;
 }
 
 .signature-home .signature-grid--secondary {
-    animation-delay: 0.24s;
+    animation-delay: 0.18s;
 }
 
 .signature-home .signature-cta {
-    animation-delay: 0.32s;
+    animation-delay: 0.26s;
 }
 
 .signature-home .signature-hero {
@@ -329,7 +406,6 @@ body {
 
 .signature-home .hero-kicker,
 .signature-home .section-heading p,
-.signature-home .signature-ribbon__label,
 .signature-home .signature-cta__eyebrow,
 .signature-home .frame-label,
 .signature-home .brand-note__eyebrow,
@@ -345,13 +421,12 @@ body {
 
 .signature-home .hero-kicker,
 .signature-home .section-heading p,
-.signature-home .signature-ribbon__label,
 .signature-home .signature-cta__eyebrow,
 .signature-home .frame-label,
 .signature-home .brand-note__eyebrow,
 .signature-home .spotlight-card__eyebrow,
 .signature-home .entry-row__type {
-    color: #6f7f78;
+    color: var(--kr-ink-3);
 }
 
 .signature-home .hero-copy h1,
@@ -360,10 +435,10 @@ body {
 .signature-home .spotlight-card h2,
 .signature-home .signature-cta__content h2 {
     margin: 0;
-    font-family: "Avenir Next", "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-family: var(--kr-font-serif);
     font-weight: 700;
-    letter-spacing: -0.038em;
-    color: #142824;
+    letter-spacing: -0.01em;
+    color: var(--kr-ink-1);
     text-wrap: balance;
     word-break: keep-all;
 }
@@ -380,7 +455,7 @@ body {
     font-size: 1.02rem;
     line-height: 1.82;
     letter-spacing: 0.004em;
-    color: #4d655e;
+    color: var(--kr-ink-2);
 }
 
 .signature-home .hero-actions {
@@ -419,13 +494,13 @@ body {
 .signature-home .hero-button--primary {
     color: #f6f1e8;
     background: linear-gradient(135deg, #153a32, #1d4a40);
-    box-shadow: 0 18px 34px rgba(23, 61, 52, 0.15);
+    box-shadow: 0 18px 34px var(--kr-shadow);
 }
 
 .signature-home .hero-button--secondary {
-    color: #193b33;
-    border-color: rgba(25, 59, 51, 0.1);
-    background: rgba(255, 255, 255, 0.66);
+    color: var(--kr-ink-1);
+    border-color: var(--kr-line);
+    background: var(--kr-card);
 }
 
 .signature-home .proof-strip {
@@ -434,7 +509,7 @@ body {
     gap: 16px;
     margin-top: 34px;
     padding-top: 22px;
-    border-top: 1px solid rgba(25, 51, 45, 0.12);
+    border-top: 1px solid var(--kr-line-2);
 }
 
 .signature-home .proof-item {
@@ -445,13 +520,13 @@ body {
     display: block;
     font-size: 1.08rem;
     letter-spacing: -0.01em;
-    color: #18342d;
+    color: var(--kr-ink-1);
 }
 
 .signature-home .proof-item span {
     display: block;
     margin-top: 6px;
-    color: #6e8079;
+    color: var(--kr-ink-3);
     font-size: 0.9rem;
     line-height: 1.6;
 }
@@ -466,11 +541,11 @@ body {
     overflow: hidden;
     padding: 24px;
     border-radius: 30px;
-    border: 1px solid rgba(24, 47, 41, 0.1);
+    border: 1px solid var(--kr-line-2);
     background:
-        linear-gradient(180deg, rgba(255, 252, 246, 0.86), rgba(241, 238, 230, 0.68)),
-        linear-gradient(135deg, rgba(198, 153, 91, 0.05), rgba(28, 90, 77, 0.015));
-    box-shadow: 0 22px 48px rgba(18, 34, 29, 0.07);
+        linear-gradient(180deg, var(--kr-popover), var(--kr-card)),
+        linear-gradient(135deg, var(--kr-accent-soft), var(--kr-brand-soft));
+    box-shadow: 0 22px 48px var(--kr-shadow);
 }
 
 .signature-home .brand-frame::before {
@@ -478,7 +553,7 @@ body {
     position: absolute;
     inset: 14px;
     border-radius: 22px;
-    border: 1px solid rgba(24, 47, 41, 0.07);
+    border: 1px solid var(--kr-line);
     pointer-events: none;
 }
 
@@ -495,7 +570,7 @@ body {
 .signature-home .frame-note,
 .signature-home .frame-summary {
     margin: 0;
-    color: #677972;
+    color: var(--kr-ink-3);
     font-size: 0.9rem;
     line-height: 1.74;
 }
@@ -517,9 +592,9 @@ body {
     min-height: 280px;
     border-radius: 22px;
     background:
-        radial-gradient(circle at center, rgba(198, 153, 91, 0.14), transparent 50%),
-        linear-gradient(180deg, rgba(250, 246, 238, 0.96), rgba(235, 243, 239, 0.9));
-    border: 1px solid rgba(24, 47, 41, 0.08);
+        radial-gradient(circle at center, var(--kr-accent-soft), transparent 50%),
+        linear-gradient(180deg, var(--kr-portrait-1), var(--kr-portrait-2));
+    border: 1px solid var(--kr-line);
 }
 
 .signature-home .brand-portrait__halo {
@@ -527,7 +602,7 @@ body {
     width: 220px;
     height: 220px;
     border-radius: 50%;
-    border: 1px dashed rgba(24, 63, 53, 0.16);
+    border: 1px dashed var(--kr-line-2);
     animation: signature-spin 24s linear infinite;
 }
 
@@ -538,7 +613,7 @@ body {
     height: 164px;
     border-radius: 22px;
     object-fit: cover;
-    box-shadow: 0 20px 36px rgba(20, 42, 35, 0.16);
+    box-shadow: 0 20px 36px var(--kr-shadow);
 }
 
 .signature-home .brand-note h2,
@@ -550,7 +625,7 @@ body {
 
 .signature-home .brand-note p {
     margin: 16px 0 0;
-    color: #597068;
+    color: var(--kr-ink-2);
     line-height: 1.82;
     letter-spacing: 0.004em;
 }
@@ -558,14 +633,14 @@ body {
 .signature-home .brand-frame__bottom {
     align-items: flex-end;
     padding-top: 18px;
-    border-top: 1px solid rgba(24, 47, 41, 0.08);
+    border-top: 1px solid var(--kr-line);
 }
 
 .signature-home .frame-entry {
     display: inline-flex;
     flex-direction: column;
     gap: 8px;
-    color: #15352d;
+    color: var(--kr-ink-1);
     text-decoration: none;
     transition: transform 0.22s ease;
 }
@@ -575,7 +650,7 @@ body {
     font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #768881;
+    color: var(--kr-ink-3);
 }
 
 .signature-home .frame-entry strong {
@@ -590,9 +665,9 @@ body {
     max-width: 280px;
     padding: 18px 20px;
     border-radius: 22px;
-    border: 1px solid rgba(24, 47, 41, 0.1);
-    background: rgba(255, 250, 242, 0.88);
-    box-shadow: 0 18px 40px rgba(18, 34, 29, 0.08);
+    border: 1px solid var(--kr-line-2);
+    background: var(--kr-popover);
+    box-shadow: 0 18px 40px var(--kr-shadow);
 }
 
 .signature-home .floating-manifesto span {
@@ -601,49 +676,22 @@ body {
     font-weight: 700;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #7a8a84;
+    color: var(--kr-ink-3);
 }
 
 .signature-home .floating-manifesto p {
     margin: 10px 0 0;
-    color: #18342d;
+    color: var(--kr-ink-1);
     line-height: 1.58;
     font-weight: 700;
     letter-spacing: -0.01em;
 }
 
-.signature-home .signature-ribbon,
-.signature-home .manifesto-panel,
+.signature-home .about-panel,
 .signature-home .entry-panel {
-    border: 1px solid rgba(24, 47, 41, 0.08);
-    background: rgba(255, 255, 255, 0.66);
-    box-shadow: 0 18px 40px rgba(18, 34, 29, 0.045);
-}
-
-.signature-home .signature-ribbon {
-    display: grid;
-    grid-template-columns: 160px minmax(0, 1fr);
-    gap: 20px;
-    align-items: center;
-    margin-top: 24px;
-    padding: 18px 24px;
-    border-radius: 28px;
-}
-
-.signature-home .signature-ribbon__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.signature-home .signature-ribbon__tags span {
-    padding: 9px 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(24, 47, 41, 0.08);
-    background: rgba(244, 239, 228, 0.7);
-    color: #29473f;
-    font-size: 0.88rem;
-    font-weight: 600;
+    border: 1px solid var(--kr-line);
+    background: var(--kr-card);
+    box-shadow: 0 18px 40px var(--kr-shadow);
 }
 
 .signature-home .signature-grid {
@@ -729,7 +777,7 @@ body {
 }
 
 .signature-home .column-panel,
-.signature-home .manifesto-panel,
+.signature-home .about-panel,
 .signature-home .entry-panel,
 .signature-home .signature-cta {
     padding: clamp(24px, 2.4vw, 34px);
@@ -756,7 +804,7 @@ body {
 .signature-home .column-item {
     grid-template-columns: 56px minmax(0, 1fr);
     padding: 22px 0;
-    border-top: 1px solid rgba(24, 47, 41, 0.1);
+    border-top: 1px solid var(--kr-line-2);
 }
 
 .signature-home .column-item:first-child {
@@ -765,13 +813,13 @@ body {
 }
 
 .signature-home .column-item__index {
-    color: #9f7a4f;
+    color: var(--kr-accent);
 }
 
 .signature-home .column-item__body strong,
 .signature-home .entry-row__body strong {
     display: block;
-    color: #163029;
+    color: var(--kr-ink-1);
     font-size: 1.08rem;
     line-height: 1.4;
     font-weight: 700;
@@ -780,7 +828,7 @@ body {
 .signature-home .column-item__body p,
 .signature-home .entry-row__body p {
     margin: 10px 0 0;
-    color: #5a7169;
+    color: var(--kr-ink-2);
     line-height: 1.8;
     letter-spacing: 0.003em;
 }
@@ -788,51 +836,60 @@ body {
 .signature-home .column-item__body span {
     display: inline-block;
     margin-top: 12px;
-    color: #7a8b85;
+    color: var(--kr-ink-3);
     font-size: 0.86rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }
 
-.signature-home .principle-list {
-    margin: 26px 0 0;
-    padding: 0;
-    list-style: none;
-    counter-reset: signature-principle;
+.signature-home .about-panel__body {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+    margin-top: 24px;
 }
 
-.signature-home .principle-list li {
-    position: relative;
-    margin-top: 18px;
-    padding-left: 52px;
-    color: #597068;
+.signature-home .about-panel__avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 12px 26px var(--kr-shadow);
+}
+
+.signature-home .about-panel__text p {
+    margin: 0;
+    color: var(--kr-ink-2);
     line-height: 1.82;
     letter-spacing: 0.003em;
 }
 
-.signature-home .principle-list li::before {
-    counter-increment: signature-principle;
-    content: counter(signature-principle);
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #18342d;
-    background: rgba(198, 153, 91, 0.16);
-    font-size: 0.88rem;
+.signature-home .about-panel__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 16px;
+}
+
+.signature-home .about-panel__links a {
     font-weight: 700;
+    color: var(--kr-brand);
+    text-decoration: none;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--kr-line-2);
+    transition: border-color 0.2s ease;
+}
+
+.signature-home .about-panel__links a:hover {
+    border-bottom-color: var(--kr-brand);
 }
 
 .signature-home .entry-row {
     grid-template-columns: 110px minmax(0, 1fr);
     align-items: start;
     padding: 18px 0;
-    border-top: 1px solid rgba(24, 47, 41, 0.1);
+    border-top: 1px solid var(--kr-line-2);
 }
 
 .signature-home .entry-row:first-child {
@@ -846,25 +903,25 @@ body {
     gap: 24px;
     align-items: start;
     margin-top: 28px;
-    border: 1px solid rgba(24, 47, 41, 0.08);
+    border: 1px solid var(--kr-line);
     background:
-        linear-gradient(180deg, rgba(255, 251, 245, 0.88), rgba(243, 239, 229, 0.76)),
-        linear-gradient(135deg, rgba(198, 153, 91, 0.04), rgba(28, 90, 77, 0.03));
-    box-shadow: 0 18px 40px rgba(18, 34, 29, 0.045);
+        linear-gradient(180deg, var(--kr-popover), var(--kr-card)),
+        linear-gradient(135deg, var(--kr-accent-soft), var(--kr-brand-soft));
+    box-shadow: 0 18px 40px var(--kr-shadow);
 }
 
 .signature-home .signature-cta__content a {
     display: inline-flex;
     margin-top: 24px;
     padding-bottom: 4px;
-    color: #173d34;
+    color: var(--kr-ink-1);
     font-weight: 700;
     text-decoration: none;
-    border-bottom: 1px solid rgba(23, 61, 52, 0.18);
+    border-bottom: 1px solid var(--kr-line-2);
 }
 
 .signature-home a:focus-visible {
-    outline: 2px solid rgba(28, 90, 77, 0.36);
+    outline: 2px solid var(--kr-brand);
     outline-offset: 4px;
 }
 
@@ -912,15 +969,13 @@ body {
 
     .signature-home .brand-frame,
     .signature-home .spotlight-card,
-    .signature-home .manifesto-panel,
+    .signature-home .about-panel,
     .signature-home .entry-panel,
-    .signature-home .signature-cta,
-    .signature-home .signature-ribbon {
+    .signature-home .signature-cta {
         border-radius: 24px;
     }
 
     .signature-home .brand-frame__body,
-    .signature-home .signature-ribbon,
     .signature-home .entry-row {
         grid-template-columns: 1fr;
     }
@@ -975,7 +1030,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
     .signature-home .signature-hero,
-    .signature-home .signature-ribbon,
     .signature-home .signature-grid,
     .signature-home .signature-cta {
         opacity: 1;
@@ -1021,9 +1075,9 @@ body {
 
 .interview-hub__hero,
 .interview-summary {
-    border: 1px solid rgba(24, 47, 41, 0.08);
-    background: rgba(255, 255, 255, 0.68);
-    box-shadow: 0 18px 40px rgba(18, 34, 29, 0.045);
+    border: 1px solid var(--kr-line);
+    background: var(--kr-card);
+    box-shadow: 0 18px 40px var(--kr-shadow);
 }
 
 .interview-hub__hero {
@@ -1064,9 +1118,9 @@ body {
 .interview-hub__hero h1,
 .interview-feature h2 {
     margin: 0;
-    font-family: "Avenir Next", "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-family: var(--kr-font-serif);
     font-weight: 700;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.01em;
     word-break: keep-all;
 }
 
@@ -1205,7 +1259,7 @@ body {
 }
 
 .interview-summary__label {
-    color: #6f7f78;
+    color: var(--kr-ink-3);
 }
 
 .interview-summary__block ul {
@@ -1218,7 +1272,7 @@ body {
     position: relative;
     margin-top: 12px;
     padding-left: 18px;
-    color: #547069;
+    color: var(--kr-ink-2);
     line-height: 1.8;
 }
 
@@ -1230,7 +1284,7 @@ body {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #b7864e;
+    background: var(--kr-accent);
 }
 
 .interview-summary__tags {
@@ -1243,9 +1297,9 @@ body {
 .interview-summary__tags span {
     padding: 9px 14px;
     border-radius: 999px;
-    border: 1px solid rgba(24, 47, 41, 0.08);
-    background: rgba(244, 239, 228, 0.72);
-    color: #29473f;
+    border: 1px solid var(--kr-line);
+    background: var(--kr-tag);
+    color: var(--kr-ink-1);
     font-size: 0.88rem;
     font-weight: 600;
 }

@@ -63,16 +63,16 @@ onBeforeUnmount(() => {
   height: 36px;
   padding: 0;
   border-radius: 999px;
-  border: 1px solid rgba(24, 47, 41, 0.08);
-  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid var(--kr-line);
+  background: var(--kr-card);
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .wechat-qr__trigger:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 10px 22px rgba(18, 34, 29, 0.08);
+  background: var(--kr-card-solid);
+  box-shadow: 0 10px 22px var(--kr-shadow);
 }
 
 .wechat-qr__popover {
@@ -83,9 +83,9 @@ onBeforeUnmount(() => {
   width: 188px;
   padding: 14px;
   border-radius: 18px;
-  border: 1px solid rgba(24, 47, 41, 0.08);
-  background: rgba(255, 252, 246, 0.97);
-  box-shadow: 0 18px 40px rgba(18, 34, 29, 0.12);
+  border: 1px solid var(--kr-line);
+  background: var(--kr-popover);
+  box-shadow: 0 18px 40px var(--kr-shadow);
   backdrop-filter: blur(16px);
   text-align: center;
   opacity: 0;
@@ -105,7 +105,7 @@ onBeforeUnmount(() => {
 .wechat-qr__popover p {
   margin: 10px 0 0;
   font-size: 0.82rem;
-  color: #566e67;
+  color: var(--kr-ink-2);
 }
 
 .wechat-qr.is-open .wechat-qr__popover {

@@ -48,19 +48,19 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1px solid rgba(24, 47, 41, 0.1);
-  background: rgba(255, 252, 246, 0.9);
-  color: #1c5a4d;
+  border: 1px solid var(--kr-line-2);
+  background: var(--kr-popover);
+  color: var(--kr-brand);
   cursor: pointer;
-  box-shadow: 0 14px 30px rgba(18, 34, 29, 0.1);
+  box-shadow: 0 14px 30px var(--kr-shadow);
   backdrop-filter: blur(10px);
   transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease;
 }
 
 .back-to-top:hover {
   transform: translateY(-3px);
-  background: #ffffff;
-  box-shadow: 0 18px 36px rgba(18, 34, 29, 0.14);
+  background: var(--kr-card-solid);
+  box-shadow: 0 18px 36px var(--kr-shadow);
 }
 
 .back-to-top-enter-active,
