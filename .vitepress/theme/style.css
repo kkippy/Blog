@@ -12,31 +12,31 @@
   --kr-body-bg:
     radial-gradient(circle at top, rgba(230, 235, 230, 0.72), transparent 42%),
     linear-gradient(180deg, #f6f2e9 0%, #f8f6ef 52%, #f1f4ef 100%);
-  --kr-card: var(--kr-card);
+  --kr-card: rgba(255, 255, 255, 0.72);
   --kr-card-solid: #fffdf8;
-  --kr-popover: var(--kr-popover);
-  --kr-tag: var(--kr-tag);
-  --kr-nav-bg: var(--kr-nav-bg);
-  --kr-portrait-1: var(--kr-portrait-1);
-  --kr-portrait-2: var(--kr-portrait-2);
+  --kr-popover: rgba(255, 252, 246, 0.95);
+  --kr-tag: rgba(244, 239, 228, 0.7);
+  --kr-nav-bg: rgba(248, 245, 238, 0.84);
+  --kr-portrait-1: rgba(250, 246, 238, 0.96);
+  --kr-portrait-2: rgba(235, 243, 239, 0.9);
 
   /* 墨色文字 */
   --kr-ink-1: #173129;
-  --kr-ink-2: var(--kr-ink-2);
-  --kr-ink-3: var(--kr-ink-3);
+  --kr-ink-2: #4d655e;
+  --kr-ink-3: #6f7f78;
 
   /* 品牌色与强调色 */
-  --kr-brand: var(--kr-brand);
+  --kr-brand: #1c5a4d;
   --kr-brand-2: #2e7a6a;
   --kr-brand-3: #134237;
   --kr-brand-soft: rgba(46, 122, 106, 0.14);
-  --kr-accent: var(--kr-accent);
-  --kr-accent-soft: var(--kr-accent-soft);
+  --kr-accent: #b7864e;
+  --kr-accent-soft: rgba(198, 153, 91, 0.16);
 
   /* 线条与阴影 */
-  --kr-line: var(--kr-line);
+  --kr-line: rgba(24, 47, 41, 0.08);
   --kr-line-2: rgba(24, 47, 41, 0.12);
-  --kr-shadow: var(--kr-shadow);
+  --kr-shadow: rgba(18, 34, 29, 0.06);
 
   /* VitePress 主题变量映射 */
   --vp-c-default-1: #27453d;
@@ -188,17 +188,32 @@ body {
 }
 
 .VPNavBarMenu {
+    align-items: center;
+    height: var(--vp-nav-height);
     gap: 6px;
 }
 
+/* 默认链接行高等于整条导航高度（64px）。再加上下内边距会把
+   胶囊背景撑到约 80px，高出导航栏、文字也不再居中。
+   这里改成固定 36px 的胶囊，在 64px 导航里垂直居中。 */
 .VPNavBarMenuLink,
 .VPFlyout .button {
-    padding: 8px 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center;
+    box-sizing: border-box;
+    height: 36px !important;
+    padding: 0 14px !important;
+    line-height: 1 !important;
     border-radius: 999px;
     transition:
         background-color 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
+        color 0.2s ease;
+}
+
+.VPFlyout .button .text {
+    line-height: 1;
+    height: auto;
 }
 
 .VPNavBarMenuLink:hover,
