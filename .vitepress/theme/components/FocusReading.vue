@@ -85,8 +85,8 @@ const toggle = () => {
 .focus-reading__button.is-active {
   position: fixed;
   top: 78px;
-  left: 28px;
-  z-index: 90;
+  right: 28px;
+  z-index: 20;
   color: var(--kr-ink-1);
   border-color: var(--kr-line-2);
   background: var(--kr-card-solid);

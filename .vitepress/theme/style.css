@@ -298,23 +298,42 @@ body {
     color: var(--kr-ink-1);
 }
 
+/* 菜单相对 36px 胶囊定位。top 贴住按钮，padding-top 是可悬停的空隙，
+   避免移入菜单时经过缝隙被关掉。可见卡片是内部的 .VPMenu。 */
 .VPFlyout .menu {
-    border: 1px solid var(--kr-line) !important;
-    border-radius: 18px !important;
-    background: var(--kr-popover) !important;
-    box-shadow: 0 18px 40px var(--kr-shadow) !important;
-    backdrop-filter: blur(16px);
+    top: 100% !important;
+    right: 0;
+    padding-top: 6px !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none;
 }
 
-/* 下拉菜单项：显式 flex 垂直居中，悬停背景铺满整行，
-   不再依赖"行高恰好等于高度"的默认实现 */
+.VPFlyout .VPMenu {
+    min-width: 148px;
+    padding: 6px !important;
+    border: 1px solid var(--kr-line) !important;
+    border-radius: 14px !important;
+    background: var(--kr-card-solid) !important;
+    box-shadow: 0 12px 28px var(--kr-shadow) !important;
+}
+
 .VPFlyout .menu .VPMenuLink .link {
     display: flex;
     align-items: center;
     min-height: 36px;
-    padding: 0 12px;
-    line-height: 1.5;
+    padding: 0 14px;
+    line-height: 1;
+    font-size: 14px;
+    font-weight: 600;
     border-radius: 10px;
+    color: var(--kr-ink-1);
+}
+
+.VPFlyout .menu .VPMenuLink .link:hover {
+    color: var(--kr-ink-1);
+    background: var(--kr-brand-soft);
 }
 
 .VPNavBarSearch .DocSearch-Button {
@@ -413,14 +432,37 @@ body {
     background: var(--kr-accent-soft);
 }
 
-/* 锚点跳转平滑滚动 */
+/* 锚点跳转平滑滚动。滚动条槽位常驻，搜索弹层锁住 body 时页面不再横跳 */
 html {
     scroll-behavior: smooth;
+    scrollbar-gutter: stable;
 }
 
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;
+    }
+}
+
+/* 换页时只让新正文入场，导航保持不动 */
+.kr-page-enter {
+    animation: kr-page-enter 240ms ease-out;
+}
+
+@keyframes kr-page-enter {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kr-page-enter {
+        animation: none;
     }
 }
 

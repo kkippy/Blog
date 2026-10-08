@@ -31,6 +31,21 @@ export default {
         }
         onMounted(() => nextTick(attachZoom))
         watch(() => route.path, () => nextTick(attachZoom))
+
+        // 只在路径变化后播一次正文入场。锚点跳转不改 route.path，不会触发。
+        watch(
+          () => route.path,
+          async () => {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+            await nextTick()
+            const target = document.querySelector('.vp-doc, .VPHome')
+            if (!target) return
+            target.classList.remove('kr-page-enter')
+            void target.offsetWidth
+            target.classList.add('kr-page-enter')
+          },
+          { flush: 'post' }
+        )
       }
 
       return () => {
