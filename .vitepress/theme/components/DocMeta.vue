@@ -42,13 +42,13 @@ const show = computed(() => wordCount.value >= 100 && !frontmatter.value.class)
   font-size: 0.84rem;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: #7a8b85;
+  color: var(--kr-ink-3);
 }
 
 .doc-meta__dot {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #b7864e;
+  background: var(--kr-accent);
 }
 </style>

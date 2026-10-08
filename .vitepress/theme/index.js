@@ -7,6 +7,7 @@ import HomePage from './components/HomePage.vue'
 import ReadingProgress from './components/ReadingProgress.vue'
 import BackToTop from './components/BackToTop.vue'
 import DocMeta from './components/DocMeta.vue'
+import FocusReading from './components/FocusReading.vue'
 import WeChatQR from './components/WeChatQR.vue'
 import './style.css'
 
@@ -30,13 +31,31 @@ export default {
         }
         onMounted(() => nextTick(attachZoom))
         watch(() => route.path, () => nextTick(attachZoom))
+
+        // 只在路径变化后播一次正文入场。锚点跳转不改 route.path，不会触发。
+        watch(
+          () => route.path,
+          async () => {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+            await nextTick()
+            const target = document.querySelector('.vp-doc, .VPHome')
+            if (!target) return
+            target.classList.remove('kr-page-enter')
+            void target.offsetWidth
+            target.classList.add('kr-page-enter')
+          },
+          { flush: 'post' }
+        )
       }
 
       return () => {
         const slots = {
           // https://vitepress.dev/guide/extending-default-theme#layout-slots
           'layout-top': () => [h(ReadingProgress), h(BackToTop)],
-          'doc-before': () => h(DocMeta),
+          'doc-before': () =>
+            frontmatter.value.layout === 'home'
+              ? null
+              : h('div', { class: 'doc-before-row' }, [h(DocMeta), h(FocusReading)]),
           'nav-bar-content-after': () => h(WeChatQR),
           'nav-screen-content-after': () => h(WeChatQR),
         }
