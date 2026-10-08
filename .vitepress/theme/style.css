@@ -170,6 +170,65 @@
     max-width: 44rem !important;
   }
 }
+
+/* 文章标题上方：元信息在左，专注阅读在右 */
+.doc-before-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.doc-before-row .doc-meta {
+  margin: 0;
+  margin-right: auto;
+}
+
+/* 专注阅读：收起左右目录，正文仍保持 44rem，在腾出的区域里居中 */
+@media (min-width: 960px) {
+  html.focus-reading .VPSidebar {
+    display: none !important;
+  }
+
+  html.focus-reading .VPContent.has-sidebar {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  html.focus-reading .VPNavBar.has-sidebar .title {
+    position: relative !important;
+    width: auto !important;
+    height: var(--vp-nav-height);
+    padding: 0 8px 0 32px !important;
+  }
+
+  html.focus-reading .VPNavBar.has-sidebar .content,
+  html.focus-reading .VPNavBar.has-sidebar .divider {
+    padding-left: 0 !important;
+    padding-right: 32px !important;
+  }
+
+  html.focus-reading .VPDoc .aside {
+    display: none !important;
+  }
+
+  html.focus-reading .VPDoc .container {
+    justify-content: center;
+  }
+
+  html.focus-reading .VPDoc .content {
+    width: 100%;
+    max-width: none;
+    margin-inline: auto;
+  }
+
+  html.focus-reading .VPDoc.has-aside .content-container,
+  html.focus-reading .VPDoc .content-container {
+    max-width: 44rem !important;
+    margin-inline: auto;
+  }
+}
 body {
     background: var(--kr-body-bg);
     color: var(--kr-ink-1);

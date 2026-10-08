@@ -7,6 +7,7 @@ import HomePage from './components/HomePage.vue'
 import ReadingProgress from './components/ReadingProgress.vue'
 import BackToTop from './components/BackToTop.vue'
 import DocMeta from './components/DocMeta.vue'
+import FocusReading from './components/FocusReading.vue'
 import WeChatQR from './components/WeChatQR.vue'
 import './style.css'
 
@@ -36,7 +37,10 @@ export default {
         const slots = {
           // https://vitepress.dev/guide/extending-default-theme#layout-slots
           'layout-top': () => [h(ReadingProgress), h(BackToTop)],
-          'doc-before': () => h(DocMeta),
+          'doc-before': () =>
+            frontmatter.value.layout === 'home'
+              ? null
+              : h('div', { class: 'doc-before-row' }, [h(DocMeta), h(FocusReading)]),
           'nav-bar-content-after': () => h(WeChatQR),
           'nav-screen-content-after': () => h(WeChatQR),
         }
