@@ -185,7 +185,7 @@
   margin-right: auto;
 }
 
-/* 专注阅读：收起左右目录，正文仍保持 44rem，在腾出的区域里居中 */
+/* 专注阅读：收起左右目录，正文加宽到 64rem（约 1024px）并居中 */
 @media (min-width: 960px) {
   html.focus-reading .VPSidebar {
     display: none !important;
@@ -225,7 +225,7 @@
 
   html.focus-reading .VPDoc.has-aside .content-container,
   html.focus-reading .VPDoc .content-container {
-    max-width: 44rem !important;
+    max-width: min(64rem, calc(100vw - 6rem)) !important;
     margin-inline: auto;
   }
 }

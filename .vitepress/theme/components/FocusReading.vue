@@ -36,7 +36,7 @@ const toggle = () => {
     class="focus-reading__button"
     :class="{ 'is-active': active }"
     :aria-pressed="active"
-    :title="active ? '退出专注阅读，恢复两侧目录' : '收起两侧目录，专心阅读。正文宽度保持不变'"
+    :title="active ? '退出专注阅读，恢复两侧目录和默认行宽' : '收起两侧目录，加宽正文'"
     @click="toggle"
   >
     <svg v-if="!active" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -85,11 +85,11 @@ const toggle = () => {
 .focus-reading__button.is-active {
   position: fixed;
   top: 78px;
-  right: 28px;
+  left: 28px;
   z-index: 90;
   color: var(--kr-ink-1);
-  border-color: transparent;
-  background: var(--kr-brand-soft);
+  border-color: var(--kr-line-2);
+  background: var(--kr-card-solid);
   box-shadow: 0 12px 28px var(--kr-shadow);
 }
 

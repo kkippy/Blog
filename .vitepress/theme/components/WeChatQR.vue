@@ -78,21 +78,40 @@ onBeforeUnmount(() => {
 
 .wechat-qr__popover {
   position: absolute;
-  top: calc(100% + 12px);
+  top: calc(100% + 10px);
   right: 0;
-  z-index: 120;
+  z-index: 40;
   width: 320px;
   padding: 14px;
   border-radius: 18px;
-  border: 1px solid var(--kr-line);
-  background: var(--kr-popover);
+  border: 1px solid var(--kr-line-2);
+  background: var(--kr-card-solid);
   box-shadow: 0 18px 40px var(--kr-shadow);
-  backdrop-filter: blur(16px);
   text-align: center;
   opacity: 0;
-  transform: translateY(-6px);
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease,
+    visibility 0s linear 0.18s,
+    pointer-events 0s linear 0.18s;
+}
+
+/* 盖住按钮和卡片之间的空隙，鼠标移入卡片时不会中途关掉 */
+.wechat-qr__popover::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -14px;
+  height: 14px;
+}
+
+.wechat-qr__popover,
+.wechat-qr__popover * {
+  pointer-events: none;
 }
 
 .wechat-qr__popover img {
@@ -109,19 +128,19 @@ onBeforeUnmount(() => {
   color: var(--kr-ink-2);
 }
 
-.wechat-qr.is-open .wechat-qr__popover {
+.wechat-qr__trigger:hover + .wechat-qr__popover,
+.wechat-qr__trigger:focus-visible + .wechat-qr__popover,
+.wechat-qr__popover:hover,
+.wechat-qr.is-open .wechat-qr__popover,
+.wechat-qr__trigger:hover + .wechat-qr__popover *,
+.wechat-qr__trigger:focus-visible + .wechat-qr__popover *,
+.wechat-qr__popover:hover *,
+.wechat-qr.is-open .wechat-qr__popover * {
   opacity: 1;
-  transform: translateY(0);
+  visibility: visible;
   pointer-events: auto;
-}
-
-@media (hover: hover) {
-  .wechat-qr:hover .wechat-qr__popover,
-  .wechat-qr:focus-within .wechat-qr__popover {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-  }
+  transform: translateY(0);
+  transition-delay: 0s;
 }
 
 @media (prefers-reduced-motion: reduce) {
