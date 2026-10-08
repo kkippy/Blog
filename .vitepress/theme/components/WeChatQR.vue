@@ -53,6 +53,7 @@ onBeforeUnmount(() => {
 .wechat-qr {
   position: relative;
   display: inline-flex;
+  margin-left: 10px;
 }
 
 .wechat-qr__trigger {
@@ -80,7 +81,7 @@ onBeforeUnmount(() => {
   top: calc(100% + 12px);
   right: 0;
   z-index: 120;
-  width: 188px;
+  width: 320px;
   padding: 14px;
   border-radius: 18px;
   border: 1px solid var(--kr-line);
@@ -96,8 +97,8 @@ onBeforeUnmount(() => {
 
 .wechat-qr__popover img {
   display: block;
-  width: 160px;
-  height: 160px;
+  width: 100%;
+  height: auto;
   margin: 0 auto;
   border-radius: 10px;
 }
