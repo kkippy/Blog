@@ -11,11 +11,11 @@ export function bindCopyCheck() {
     if (!button.querySelector('.kr-check')) {
       button.insertAdjacentHTML(
         'beforeend',
-        '<svg class="kr-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 14 2 2 4-4" /></svg>'
+        '<svg class="kr-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7" /></svg>'
       )
     }
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const hold = reduced ? 500 : 900
+    const hold = reduced ? 700 : 1400
     const started = performance.now()
     const watch = () => {
       if (button.classList.contains('copied')) {
