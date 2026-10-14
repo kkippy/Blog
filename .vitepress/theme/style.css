@@ -782,3 +782,162 @@ a.note-cover:hover {
     }
 }
 
+/* 复制成功：画一笔对勾，不弹出「已复制」 */
+.vp-doc [class*='language-'] > button.copy {
+    position: absolute;
+}
+
+.vp-doc [class*='language-'] > button.copy .kr-check {
+    display: none;
+    position: absolute;
+    inset: 0;
+    width: 20px;
+    height: 20px;
+    margin: auto;
+    pointer-events: none;
+}
+
+.vp-doc [class*='language-'] > button.copy .kr-check path {
+    fill: none;
+    stroke: var(--kr-brand);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 12;
+    stroke-dashoffset: 12;
+}
+
+.vp-doc [class*='language-'] > button.copy.copied,
+.vp-doc [class*='language-'] > button.copy:hover.copied {
+    border-radius: 4px;
+    background-image: none;
+}
+
+.vp-doc [class*='language-'] > button.copy.copied::before,
+.vp-doc [class*='language-'] > button.copy:hover.copied::before {
+    content: none;
+    display: none;
+}
+
+.vp-doc [class*='language-'] > button.copy.copied .kr-check {
+    display: block;
+}
+
+.vp-doc [class*='language-'] > button.copy.copied .kr-check path {
+    animation: kr-check-draw 250ms ease forwards;
+}
+
+@keyframes kr-check-draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Promise 面试题：二级标题展开，高度过渡，不弹跳 */
+.kr-section {
+    border-bottom: 1px solid var(--kr-line);
+}
+
+.kr-section h2 {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.kr-section h2::before {
+    content: none;
+}
+
+.kr-section__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    margin: 0;
+    padding: 18px 2px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    letter-spacing: 0;
+    text-align: left;
+    cursor: pointer;
+}
+
+.kr-section__chevron {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin-right: 6px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 280ms ease;
+}
+
+.kr-section.is-open .kr-section__chevron {
+    transform: rotate(225deg);
+}
+
+.kr-section__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 280ms ease;
+}
+
+.kr-section.is-open .kr-section__panel {
+    grid-template-rows: 1fr;
+}
+
+.kr-section__inner {
+    overflow: hidden;
+}
+
+.kr-section.is-open .kr-section__inner {
+    padding-bottom: 8px;
+}
+
+/* 点封面进入文章：导航留在原地，正文淡入。不把方封面拉到标题上。 */
+.VPNav {
+    view-transition-name: kr-nav;
+}
+
+::view-transition-old(kr-nav),
+::view-transition-new(kr-nav) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+    animation: kr-vt-out 160ms ease-in both;
+    mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+    animation: kr-vt-in 220ms ease both;
+    mix-blend-mode: normal;
+}
+
+@keyframes kr-vt-out {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes kr-vt-in {
+    from {
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kr-section__chevron,
+    .kr-section__panel,
+    .vp-doc [class*='language-'] > button.copy.copied .kr-check path {
+        transition: none;
+        animation: none;
+        stroke-dashoffset: 0;
+    }
+}
+

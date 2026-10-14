@@ -1,4 +1,8 @@
 <script setup>
+import { useCoverTransition } from '../coverTransition.js'
+
+const onOpen = useCoverTransition()
+
 const finished = [
   {
     kicker: '前端',
@@ -30,7 +34,7 @@ const drafts = ['事件循环', '闭包', 'this', '原型链']
         <p class="writing-card__kicker">最近在写</p>
         <h2>Promise 只有三种状态。变了，就不会再变。</h2>
         <p>pending、fulfilled、rejected。then 和 catch 的返回值，面试时很容易说反。</p>
-        <a class="writing-card__link" href="/exam/interview/Promise面试题">打开这篇 →</a>
+        <a class="writing-card__link" href="/exam/interview/Promise面试题" @pointerup="onOpen">打开这篇 →</a>
       </div>
       <img class="writing-card__mascot" src="/mascot.png" alt="" />
     </section>
@@ -39,7 +43,7 @@ const drafts = ['事件循环', '闭包', 'this', '原型链']
       <h3>写完的</h3>
       <p class="note-block__hint">可以从头读到尾。</p>
       <div class="note-covers">
-        <a v-for="item in finished" :key="item.href" class="note-cover" :href="item.href">
+        <a v-for="item in finished" :key="item.href" class="note-cover" :href="item.href" @pointerup="onOpen">
           <span class="note-cover__kicker">{{ item.kicker }}</span>
           <span class="note-cover__title">{{ item.title }}</span>
         </a>

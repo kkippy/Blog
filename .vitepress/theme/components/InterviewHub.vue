@@ -1,4 +1,7 @@
 <script setup>
+import { useCoverTransition } from '../coverTransition.js'
+
+const onOpen = useCoverTransition()
 const drafts = ['事件循环', '宏任务 / 微任务', 'async / await', '闭包', '原型链', 'this', '浏览器缓存', '网络基础']
 </script>
 
@@ -12,7 +15,7 @@ const drafts = ['事件循环', '宏任务 / 微任务', 'async / await', '闭�
         <p class="writing-card__kicker">写完的 · 可以开始读</p>
         <h2>Promise 只有三种状态。变了，就不会再变。</h2>
         <p>链式调用看的是上一个 then 返回了什么，不是把状态原样抄过去。</p>
-        <a class="writing-card__link" href="/exam/interview/Promise面试题">打开这篇 →</a>
+        <a class="writing-card__link" href="/exam/interview/Promise面试题" @pointerup="onOpen">打开这篇 →</a>
       </div>
       <img class="writing-card__mascot" src="/mascot.png" alt="" />
     </section>
