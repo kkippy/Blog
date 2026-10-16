@@ -275,13 +275,63 @@ body {
 
 .VPNavBar {
     background: var(--kr-nav-bg) !important;
-    border-bottom: 1px solid var(--kr-line) !important;
+    border-bottom: none !important;
 }
 
 .VPSidebar,
 .VPNavBar .content-body,
 .VPLocalNav {
     background-color: var(--kr-nav-bg) !important;
+}
+
+/* 导航是全站公共条：首页、文章、面试题同一套排版和底边线 */
+.VPNavBar .divider {
+    padding-left: 0 !important;
+    background-color: transparent !important;
+}
+
+.VPNavBar .divider-line,
+.VPNavBar.home.top .divider-line,
+.VPNavBar:not(.home) .divider-line {
+    background-color: var(--kr-line) !important;
+}
+
+.VPNavBarTitle.has-sidebar .title {
+    border-bottom-color: transparent !important;
+}
+
+@media (min-width: 960px) {
+    .VPNavBar,
+    .VPNavBar.home,
+    .VPNavBar.has-sidebar,
+    .VPNavBar:not(.home),
+    .VPNavBar:not(.has-sidebar):not(.home.top),
+    .VPNavBar:not(.home.top) .content-body,
+    .VPNavBar.has-sidebar .content-body {
+        background-color: var(--kr-nav-bg) !important;
+    }
+
+    .VPNavBar.has-sidebar .wrapper {
+        padding: 0 32px !important;
+    }
+
+    .VPNavBar.has-sidebar .container {
+        max-width: calc(var(--vp-layout-max-width) - 64px) !important;
+    }
+
+    .VPNavBar.has-sidebar .title {
+        position: relative !important;
+        left: auto !important;
+        width: auto !important;
+        padding: 0 !important;
+        height: var(--vp-nav-height) !important;
+        background-color: transparent !important;
+    }
+
+    .VPNavBar.has-sidebar .content {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
 }
 
 .VPNavBarTitle .title {
@@ -578,10 +628,10 @@ html {
 }
 
 .vp-doc div[class*='language-'] > pre,
-.vp-doc div[class*='language-'] > span.lang,
 .vp-block > pre {
     position: relative;
     z-index: 1;
+    padding-top: 48px;
 }
 
 .dark .vp-doc div[class*='language-']::before,
@@ -607,6 +657,30 @@ html {
 .NotFound .quote {
     max-width: 22em;
     line-height: 1.85;
+}
+
+.NotFound {
+    position: relative;
+    overflow: hidden;
+}
+
+.NotFound::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: url("/404-quill-ink.jpg") center 62% / min(460px, 72vw) no-repeat;
+    opacity: 0.38;
+}
+
+.NotFound > * {
+    position: relative;
+    z-index: 1;
+}
+
+.dark .NotFound::before {
+    opacity: 0.16;
 }
 
 .NotFound .link {
@@ -888,53 +962,56 @@ a.note-cover:hover {
     }
 }
 
-/* 复制按钮 20×20；悬浮提示用站点纸色，不用浏览器默认 title */
+/* 复制按钮 30×30；语言名悬浮时以胶囊出现在按钮左边 */
 .vp-doc [class*='language-'] > button.copy {
     position: absolute;
     top: 8px;
     right: 8px;
-    width: 20px;
-    height: 20px;
-    border-radius: 6px;
-    background-size: 12px;
+    z-index: 3;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background-size: 16px;
 }
 
-.vp-doc [class*='language-'] > button.copy::after {
-    content: "复制";
+.vp-doc [class*='language-'] > span.lang {
     position: absolute;
-    right: calc(100% + 6px);
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 3px 8px;
-    border-radius: 8px;
-    background: var(--kr-card-solid);
-    color: var(--kr-ink-1);
+    top: 8px;
+    right: 44px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
     border: 1px solid var(--kr-line-2);
-    box-shadow: 0 6px 16px var(--kr-shadow);
+    background: var(--kr-card-solid);
+    color: var(--kr-ink-2);
     font-size: 12px;
-    line-height: 1.4;
-    letter-spacing: 0.04em;
-    white-space: nowrap;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.02em;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.15s ease;
+    transition: opacity 0.2s ease;
 }
 
-.vp-doc [class*='language-'] > button.copy:hover::after,
-.vp-doc [class*='language-'] > button.copy:focus-visible::after {
-    opacity: 1;
+.vp-doc [class*='language-'] > span.lang:empty {
+    display: none;
 }
 
-.vp-doc [class*='language-'] > button.copy.copied::after {
-    opacity: 0;
+.vp-doc [class*='language-']:hover > span.lang,
+.vp-doc [class*='language-'] > button.copy:focus + span.lang,
+.vp-doc [class*='language-']:hover > button.copy + span.lang {
+    opacity: 1 !important;
 }
 
 .vp-doc [class*='language-'] > button.copy .kr-check {
     display: none;
     position: absolute;
     inset: 0;
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
     margin: auto;
     pointer-events: none;
 }
@@ -951,7 +1028,7 @@ a.note-cover:hover {
 
 .vp-doc [class*='language-'] > button.copy.copied,
 .vp-doc [class*='language-'] > button.copy:hover.copied {
-    border-radius: 6px;
+    border-radius: 999px;
     border-color: var(--kr-brand);
     background-color: var(--kr-brand);
     background-image: none;
