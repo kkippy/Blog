@@ -6,5 +6,8 @@ dist/
 .vitepress-dev.err.log
 .idea/
 
+# 本地密钥（NOTION_TOKEN 放在 .env.local）
+.env*
+
 # logs
 *.log
