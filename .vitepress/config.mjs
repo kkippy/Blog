@@ -53,7 +53,9 @@ export default defineConfig({
     image: {
         // 图片懒加载
         lazyLoading: true
-    }
+    },
+    // 去掉原生 title，改用自定义悬浮提示
+    codeCopyButtonTitle: '',
   },
   navbar: true,
   themeConfig: {

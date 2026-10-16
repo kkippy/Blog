@@ -552,7 +552,42 @@ html {
 
 .vp-doc div[class*='language-'],
 .vp-block {
+    isolation: isolate;
     border: 1px solid var(--kr-line-2);
+    background-color: var(--vp-code-block-bg);
+    background-image: repeating-linear-gradient(
+        91deg,
+        transparent 0 10px,
+        rgba(90, 68, 40, 0.04) 10px 11px
+    );
+}
+
+/* 粗纸纹：SVG 噪点叠在米色底上，代码文字仍保持清晰 */
+.vp-doc div[class*='language-']::before,
+.vp-block::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' seed='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+}
+
+.vp-doc div[class*='language-'] > pre,
+.vp-doc div[class*='language-'] > span.lang,
+.vp-block > pre {
+    position: relative;
+    z-index: 1;
+}
+
+.dark .vp-doc div[class*='language-']::before,
+.dark .vp-block::before {
+    opacity: 0.2;
+    mix-blend-mode: overlay;
 }
 
 /* 沿用 VitePress 默认 404 结构，只换成站点的字色和按钮 */
@@ -853,17 +888,53 @@ a.note-cover:hover {
     }
 }
 
-/* 复制成功：画一笔对勾，不弹出「已复制」 */
+/* 复制按钮 20×20；悬浮提示用站点纸色，不用浏览器默认 title */
 .vp-doc [class*='language-'] > button.copy {
     position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background-size: 12px;
+}
+
+.vp-doc [class*='language-'] > button.copy::after {
+    content: "复制";
+    position: absolute;
+    right: calc(100% + 6px);
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 3px 8px;
+    border-radius: 8px;
+    background: var(--kr-card-solid);
+    color: var(--kr-ink-1);
+    border: 1px solid var(--kr-line-2);
+    box-shadow: 0 6px 16px var(--kr-shadow);
+    font-size: 12px;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+
+.vp-doc [class*='language-'] > button.copy:hover::after,
+.vp-doc [class*='language-'] > button.copy:focus-visible::after {
+    opacity: 1;
+}
+
+.vp-doc [class*='language-'] > button.copy.copied::after {
+    opacity: 0;
 }
 
 .vp-doc [class*='language-'] > button.copy .kr-check {
     display: none;
     position: absolute;
     inset: 0;
-    width: 28px;
-    height: 28px;
+    width: 12px;
+    height: 12px;
     margin: auto;
     pointer-events: none;
 }
@@ -880,7 +951,7 @@ a.note-cover:hover {
 
 .vp-doc [class*='language-'] > button.copy.copied,
 .vp-doc [class*='language-'] > button.copy:hover.copied {
-    border-radius: 8px;
+    border-radius: 6px;
     border-color: var(--kr-brand);
     background-color: var(--kr-brand);
     background-image: none;
