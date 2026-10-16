@@ -416,6 +416,13 @@ function createConverter(notion, ctx) {
     return `<details>\n<summary>${summary}</summary>\n\n${children}\n\n</details>`
   })
 
+  // 段落下的子块在 Markdown 里没有对应的缩进语义，缩进反而会变成代码块，所以平铺输出
+  n2m.setCustomTransformer('paragraph', async (block) => {
+    if (!block.has_children) return false
+    const text = await renderInline(block.paragraph.rich_text)
+    return [text, await renderChildren(block.id)].filter((s) => s.trim()).join('\n\n')
+  })
+
   for (const level of [1, 2, 3]) {
     const type = `heading_${level}`
     n2m.setCustomTransformer(type, async (block) => {
@@ -483,6 +490,7 @@ async function syncPage(notion, page, localIndex, opts) {
     const unchanged = sameTime(fmValue(local.fm, 'notion_last_edited'), source.lastEdited)
     const localHash = sha256(normalizeBody(local.body))
     const modified = fmValue(local.fm, 'notion_hash') !== localHash
+    if (modified) result.warnings.push('本地正文和上次同步时不一致（同步后本地改过）')
     if (unchanged && !opts.force) return Object.assign(result, { status: 'unchanged' })
     if (modified && !opts.force) return skip('同步后本地改过正文（哈希不一致），用 --force 覆盖')
   }
@@ -512,6 +520,8 @@ async function syncPage(notion, page, localIndex, opts) {
     notion_hash: sha256(normalizeBody(body)),
   }
   if (ctx.imageCount) result.warnings.push(`Notion 图片 ${ctx.imageCount} 张`)
+  const notionLinks = markdown.match(/\]\(https?:\/\/(?:www\.|app\.)?notion\.(?:so|com)\//g)
+  if (notionLinks) result.warnings.push(`正文里有 ${notionLinks.length} 处 Notion 内部链接，发布后读者可能打不开`)
 
   let chain = []
   let tail = null
