@@ -675,7 +675,7 @@ html {
     content: "";
     position: fixed;
     right: 3vw;
-    bottom: 6vh;
+    bottom: 10vh;
     z-index: 0;
     width: min(360px, 40vw);
     height: min(360px, 40vw);
