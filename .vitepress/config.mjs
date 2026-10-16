@@ -60,6 +60,12 @@ export default defineConfig({
     docFooter: { prev: '上一篇', next: '下一篇' },
     logo: '/logo.svg',
     outlineTitle:'文章目录',
+    notFound: {
+      title: '没有找到这一页',
+      quote: '链接可能写错了，或者这篇还没放上来。回首页，或者用上面的搜索找一篇写完的笔记。',
+      linkLabel: '返回首页',
+      linkText: '回首页',
+    },
     outline:[2,6],
     // https://vitepress.dev/reference/default-theme-config
     nav: [

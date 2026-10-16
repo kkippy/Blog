@@ -161,6 +161,11 @@
   --vp-c-text-3: var(--kr-ink-3);
   --vp-c-divider: var(--kr-line);
   --vp-c-gutter: var(--kr-line);
+
+  /* 代码块要比纸面更深一档，否则浅色主题里几乎看不出是代码 */
+  --vp-code-block-bg: #e6dcc8;
+  --vp-code-copy-code-bg: #f3ead8;
+  --vp-code-copy-code-hover-bg: #fffdf8;
 }
 
 .DocSearch {
@@ -545,15 +550,33 @@ html {
     color: var(--kr-ink-1);
 }
 
-.not-found-page__code {
-    margin: 0 0 12px;
-    font-size: 15px;
-    letter-spacing: 0.14em;
-    color: var(--kr-accent);
+.vp-doc div[class*='language-'],
+.vp-block {
+    border: 1px solid var(--kr-line-2);
 }
 
-.not-found-page .writing-card__mascot {
-    transform: rotate(-8deg);
+/* 沿用 VitePress 默认 404 结构，只换成站点的字色和按钮 */
+.NotFound .code {
+    font-family: var(--kr-font-text);
+    font-weight: 400;
+    color: var(--kr-brand);
+}
+
+.NotFound .title {
+    font-family: var(--kr-font-text);
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    color: var(--kr-ink-1);
+}
+
+.NotFound .quote {
+    max-width: 22em;
+    line-height: 1.85;
+}
+
+.NotFound .link {
+    border-radius: 999px;
+    padding: 6px 20px;
 }
 
 .paper-page h1 {
