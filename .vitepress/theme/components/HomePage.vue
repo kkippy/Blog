@@ -8,20 +8,28 @@ const finished = [
     kicker: '前端',
     title: 'let、const、var',
     href: '/frontEnd/js/let、const、var三剑客',
+    cover: '/covers/cover-js-let.webp',
   },
   {
     kicker: '前端',
     title: 'HTML5 语义化',
     href: '/frontEnd/html/基础知识',
+    cover: '/covers/cover-html.webp',
   },
   {
     kicker: 'Docker',
     title: 'Docker 初印象',
     href: '/DevOps/docker/Docker初印象',
+    cover: '/covers/cover-docker.webp',
   },
 ]
 
-const drafts = ['事件循环', '闭包', 'this', '原型链']
+const drafts = [
+  { title: '事件循环', cover: '/covers/cover-event-loop.webp' },
+  { title: '闭包', cover: '/covers/cover-closure.webp' },
+  { title: 'this', cover: '/covers/cover-this.webp' },
+  { title: '原型链', cover: '/covers/cover-prototype.webp' },
+]
 </script>
 
 <template>
@@ -44,6 +52,7 @@ const drafts = ['事件循环', '闭包', 'this', '原型链']
       <p class="note-block__hint">可以从头读到尾。</p>
       <div class="note-covers">
         <a v-for="item in finished" :key="item.href" class="note-cover" :href="item.href" @pointerup="onOpen">
+          <img class="note-cover__art" :src="item.cover" alt="" loading="lazy" decoding="async" />
           <span class="note-cover__kicker">{{ item.kicker }}</span>
           <span class="note-cover__title">{{ item.title }}</span>
         </a>
@@ -53,8 +62,9 @@ const drafts = ['事件循环', '闭包', 'this', '原型链']
     <section class="note-block">
       <h3>还在写</h3>
       <div class="note-covers note-covers--small">
-        <div v-for="title in drafts" :key="title" class="note-cover">
-          <span class="note-cover__title">{{ title }}</span>
+        <div v-for="item in drafts" :key="item.title" class="note-cover">
+          <img class="note-cover__art" :src="item.cover" alt="" loading="lazy" decoding="async" />
+          <span class="note-cover__title">{{ item.title }}</span>
         </div>
       </div>
     </section>

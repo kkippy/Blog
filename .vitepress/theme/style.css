@@ -635,17 +635,42 @@ html {
     color: inherit;
     text-decoration: none;
     background-color: #efe0cc;
-    background-image:
-        linear-gradient(rgba(110, 74, 36, 0.055) 1px, transparent 1px),
-        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.32  0 0 0 0 0.16  0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-    background-size: 100% 28px, 160px 160px;
-    background-position: 0 20px, 0 0;
     box-shadow: inset 0 0 0 1px rgba(110, 74, 36, 0.14), 0 12px 26px rgba(92, 64, 32, 0.08);
+}
+
+.note-cover__art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 28%;
+    pointer-events: none;
+    z-index: 0;
+    transition: transform 280ms ease;
+}
+
+.note-cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+        180deg,
+        rgba(246, 240, 226, 0.08) 28%,
+        rgba(246, 240, 226, 0.72) 68%,
+        rgba(246, 240, 226, 0.94) 100%
+    );
 }
 
 a.note-cover:hover {
     color: inherit;
     transform: translateY(-2px);
+}
+
+a.note-cover:hover .note-cover__art {
+    transform: scale(1.03);
 }
 
 .note-covers:not(.note-covers--small) .note-cover:nth-child(2) {
@@ -663,12 +688,26 @@ a.note-cover:hover {
     top: 0;
     bottom: 0;
     width: 16px;
+    z-index: 2;
     background: linear-gradient(90deg, rgba(110, 74, 36, 0.18), rgba(110, 74, 36, 0));
 }
 
 .note-covers--small .note-cover {
     aspect-ratio: 1 / 0.78;
     background-color: #f6efe3;
+}
+
+.note-covers--small .note-cover__art {
+    filter: saturate(0.78) brightness(1.04);
+}
+
+.note-covers--small .note-cover::after {
+    background: linear-gradient(
+        180deg,
+        rgba(246, 240, 226, 0.22) 24%,
+        rgba(246, 240, 226, 0.82) 70%,
+        rgba(246, 240, 226, 0.96) 100%
+    );
 }
 
 .note-covers--small .note-cover:nth-child(4n+2) {
@@ -685,6 +724,7 @@ a.note-cover:hover {
 
 .note-cover__kicker {
     position: relative;
+    z-index: 3;
     font-style: normal;
     font-size: 12px;
     letter-spacing: 0.16em;
@@ -693,6 +733,7 @@ a.note-cover:hover {
 
 .note-cover__title {
     position: relative;
+    z-index: 3;
     margin-top: 10px;
     font-weight: 400;
     font-size: 26px;
@@ -730,6 +771,24 @@ a.note-cover:hover {
 .dark .note-cover {
     background-color: #2a3330;
     box-shadow: inset 0 0 0 1px rgba(233, 228, 216, 0.12), 0 12px 26px rgba(0, 0, 0, 0.28);
+}
+
+.dark .note-cover::after {
+    background: linear-gradient(
+        180deg,
+        rgba(14, 26, 23, 0.12) 24%,
+        rgba(14, 26, 23, 0.72) 68%,
+        rgba(14, 26, 23, 0.94) 100%
+    );
+}
+
+.dark .note-covers--small .note-cover::after {
+    background: linear-gradient(
+        180deg,
+        rgba(14, 26, 23, 0.28) 20%,
+        rgba(14, 26, 23, 0.82) 70%,
+        rgba(14, 26, 23, 0.96) 100%
+    );
 }
 
 .dark .note-covers:not(.note-covers--small) .note-cover:nth-child(2) {
@@ -775,10 +834,20 @@ a.note-cover:hover {
     .note-covers--small {
         grid-template-columns: 1fr 1fr;
     }
+
+    .note-cover {
+        padding: 16px 16px 14px 22px;
+    }
+
+    .note-covers--small .note-cover__title {
+        font-size: 16px;
+        word-break: keep-all;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    a.note-cover:hover {
+    a.note-cover:hover,
+    a.note-cover:hover .note-cover__art {
         transform: none;
     }
 }

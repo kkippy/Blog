@@ -2,7 +2,16 @@
 import { useCoverTransition } from '../coverTransition.js'
 
 const onOpen = useCoverTransition()
-const drafts = ['事件循环', '宏任务 / 微任务', 'async / await', '闭包', '原型链', 'this', '浏览器缓存', '网络基础']
+const drafts = [
+  { title: '事件循环', cover: '/covers/cover-event-loop.webp' },
+  { title: '宏任务 / 微任务', cover: '/covers/cover-microtask.webp' },
+  { title: 'async / await', cover: '/covers/cover-async.webp' },
+  { title: '闭包', cover: '/covers/cover-closure.webp' },
+  { title: '原型链', cover: '/covers/cover-prototype.webp' },
+  { title: 'this', cover: '/covers/cover-this.webp' },
+  { title: '浏览器缓存', cover: '/covers/cover-cache.webp' },
+  { title: '网络基础', cover: '/covers/cover-network.webp' },
+]
 </script>
 
 <template>
@@ -24,8 +33,9 @@ const drafts = ['事件循环', '宏任务 / 微任务', 'async / await', '闭�
       <h3>还在写</h3>
       <p class="note-block__hint">名字先留着，还不能点。</p>
       <div class="note-covers note-covers--small">
-        <div v-for="title in drafts" :key="title" class="note-cover">
-          <span class="note-cover__title">{{ title }}</span>
+        <div v-for="item in drafts" :key="item.title" class="note-cover">
+          <img class="note-cover__art" :src="item.cover" alt="" loading="lazy" decoding="async" />
+          <span class="note-cover__title">{{ item.title }}</span>
         </div>
       </div>
     </section>
