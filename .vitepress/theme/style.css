@@ -680,9 +680,8 @@ html {
     width: min(360px, 40vw);
     height: min(360px, 40vw);
     pointer-events: none;
-    background: url("/404-quill-ink.jpg") center / contain no-repeat;
-    mix-blend-mode: multiply;
-    opacity: 0.92;
+    background: url("/404-quill-ink.png") center / contain no-repeat;
+    opacity: 0.95;
 }
 
 .NotFound > * {
@@ -691,7 +690,7 @@ html {
 }
 
 .dark .NotFound::before {
-    opacity: 0.4;
+    opacity: 0.55;
 }
 
 .NotFound .link {
