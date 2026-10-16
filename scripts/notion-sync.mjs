@@ -310,26 +310,41 @@ function escapeText(s) {
     .replace(/\{\{/g, '<span v-pre>{{</span>')
 }
 
-function escapeRichText(t) {
+// Notion 段落里的软换行（Shift+Enter）在 Markdown 里会被合并成一行
+const SOFT_BREAK_BLOCKS = new Set(['paragraph', 'bulleted_list_item', 'numbered_list_item', 'to_do', 'quote', 'callout'])
+
+function escapeRichText(t, softBreak = false) {
   if (t.type === 'equation' || t.annotations?.code) return
-  t.plain_text = escapeText(t.plain_text)
-  if (t.type === 'text' && t.text) t.text.content = escapeText(t.text.content)
+  const fix = (s) => {
+    const escaped = escapeText(s)
+    return softBreak ? escaped.replace(/\n/g, '<br>\n') : escaped
+  }
+  t.plain_text = fix(t.plain_text)
+  if (t.type === 'text' && t.text) t.text.content = fix(t.text.content)
 }
 
 function escapeBlock(block) {
   if (block.type === 'code' || block.type === 'equation') return
   const data = block[block.type]
   if (!data) return
-  for (const key of ['rich_text', 'caption']) if (Array.isArray(data[key])) data[key].forEach(escapeRichText)
+  if (Array.isArray(data.rich_text)) data.rich_text.forEach((t) => escapeRichText(t, SOFT_BREAK_BLOCKS.has(block.type)))
+  if (Array.isArray(data.caption)) data.caption.forEach((t) => escapeRichText(t))
   if (block.type === 'table_row') data.cells.forEach((cell) => cell.forEach(escapeRichText))
 }
 
 function tidyMarkdown(md) {
+  const lines = md.replace(/\r\n/g, '\n').split('\n')
   const out = []
   let inFence = false
   let blank = 0
-  for (const line of md.replace(/\r\n/g, '\n').split('\n')) {
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i]
     if (/^\s*```/.test(line)) inFence = !inFence
+    if (!inFence) {
+      // 段落末尾的软换行会留下孤立或悬空的 <br>
+      if (line.trim() === '<br>') line = ''
+      else if (line.endsWith('<br>') && !(lines[i + 1] ?? '').replace('<br>', '').trim()) line = line.slice(0, -4)
+    }
     if (!inFence && !line.trim()) {
       if (++blank > 1) continue
     } else blank = 0
