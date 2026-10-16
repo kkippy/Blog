@@ -635,6 +635,9 @@ html {
     color: inherit;
     text-decoration: none;
     background-color: #efe0cc;
+    background-image: linear-gradient(rgba(110, 74, 36, 0.055) 1px, transparent 1px);
+    background-size: 100% 28px;
+    background-position: 0 20px;
     box-shadow: inset 0 0 0 1px rgba(110, 74, 36, 0.14), 0 12px 26px rgba(92, 64, 32, 0.08);
 }
 
@@ -644,9 +647,11 @@ html {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 28%;
+    object-position: center 18%;
     pointer-events: none;
     z-index: 0;
+    opacity: 0.7;
+    mix-blend-mode: multiply;
     transition: transform 280ms ease;
 }
 
@@ -656,12 +661,16 @@ html {
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: linear-gradient(
-        180deg,
-        rgba(246, 240, 226, 0.08) 28%,
-        rgba(246, 240, 226, 0.72) 68%,
-        rgba(246, 240, 226, 0.94) 100%
-    );
+    background:
+        linear-gradient(rgba(110, 74, 36, 0.045) 1px, transparent 1px),
+        linear-gradient(
+            180deg,
+            transparent 46%,
+            rgba(246, 240, 226, 0.55) 72%,
+            rgba(246, 240, 226, 0.92) 100%
+        );
+    background-size: 100% 28px, 100% 100%;
+    background-position: 0 20px, 0 0;
 }
 
 a.note-cover:hover {
@@ -698,16 +707,20 @@ a.note-cover:hover .note-cover__art {
 }
 
 .note-covers--small .note-cover__art {
-    filter: saturate(0.78) brightness(1.04);
+    opacity: 0.5;
 }
 
 .note-covers--small .note-cover::after {
-    background: linear-gradient(
-        180deg,
-        rgba(246, 240, 226, 0.22) 24%,
-        rgba(246, 240, 226, 0.82) 70%,
-        rgba(246, 240, 226, 0.96) 100%
-    );
+    background:
+        linear-gradient(rgba(110, 74, 36, 0.045) 1px, transparent 1px),
+        linear-gradient(
+            180deg,
+            transparent 40%,
+            rgba(246, 240, 226, 0.62) 72%,
+            rgba(246, 240, 226, 0.94) 100%
+        );
+    background-size: 100% 28px, 100% 100%;
+    background-position: 0 20px, 0 0;
 }
 
 .note-covers--small .note-cover:nth-child(4n+2) {
@@ -773,22 +786,35 @@ a.note-cover:hover .note-cover__art {
     box-shadow: inset 0 0 0 1px rgba(233, 228, 216, 0.12), 0 12px 26px rgba(0, 0, 0, 0.28);
 }
 
+.dark .note-cover__art {
+    mix-blend-mode: soft-light;
+    opacity: 0.55;
+}
+
 .dark .note-cover::after {
-    background: linear-gradient(
-        180deg,
-        rgba(14, 26, 23, 0.12) 24%,
-        rgba(14, 26, 23, 0.72) 68%,
-        rgba(14, 26, 23, 0.94) 100%
-    );
+    background:
+        linear-gradient(rgba(233, 228, 216, 0.06) 1px, transparent 1px),
+        linear-gradient(
+            180deg,
+            transparent 46%,
+            rgba(14, 26, 23, 0.55) 72%,
+            rgba(14, 26, 23, 0.92) 100%
+        );
+    background-size: 100% 28px, 100% 100%;
+    background-position: 0 20px, 0 0;
 }
 
 .dark .note-covers--small .note-cover::after {
-    background: linear-gradient(
-        180deg,
-        rgba(14, 26, 23, 0.28) 20%,
-        rgba(14, 26, 23, 0.82) 70%,
-        rgba(14, 26, 23, 0.96) 100%
-    );
+    background:
+        linear-gradient(rgba(233, 228, 216, 0.06) 1px, transparent 1px),
+        linear-gradient(
+            180deg,
+            transparent 40%,
+            rgba(14, 26, 23, 0.62) 72%,
+            rgba(14, 26, 23, 0.94) 100%
+        );
+    background-size: 100% 28px, 100% 100%;
+    background-position: 0 20px, 0 0;
 }
 
 .dark .note-covers:not(.note-covers--small) .note-cover:nth-child(2) {
