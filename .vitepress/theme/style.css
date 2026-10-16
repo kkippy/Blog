@@ -545,6 +545,17 @@ html {
     color: var(--kr-ink-1);
 }
 
+.not-found-page__code {
+    margin: 0 0 12px;
+    font-size: 15px;
+    letter-spacing: 0.14em;
+    color: var(--kr-accent);
+}
+
+.not-found-page .writing-card__mascot {
+    transform: rotate(-8deg);
+}
+
 .paper-page h1 {
     margin: 0;
     font-weight: 400;

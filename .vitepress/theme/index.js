@@ -4,6 +4,7 @@ import { useData, useRoute, inBrowser } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import mediumZoom from 'medium-zoom'
 import HomePage from './components/HomePage.vue'
+import NotFoundPage from './components/NotFoundPage.vue'
 import ReadingProgress from './components/ReadingProgress.vue'
 import BackToTop from './components/BackToTop.vue'
 import DocMeta from './components/DocMeta.vue'
@@ -81,6 +82,8 @@ export default {
         if (frontmatter.value.layout === 'home') {
           slots['home-hero-before'] = () => h(HomePage)
         }
+
+        slots['not-found'] = () => h(NotFoundPage)
 
         return h(DefaultTheme.Layout, null, slots)
       }
