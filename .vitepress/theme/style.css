@@ -518,6 +518,14 @@ html {
     scrollbar-color: var(--kr-scrollbar) transparent;
 }
 
+/* 遮罩按 100vw 画，盖住右侧 scrollbar-gutter，避免露出一条纸色 */
+.VPLocalSearchBox {
+    left: 0 !important;
+    right: auto !important;
+    width: 100vw !important;
+    min-width: 100vw;
+}
+
 /* 滚动条跟纸色、墨绿一致，覆盖页面、侧栏、目录和代码块 */
 * {
     scrollbar-width: thin;
@@ -661,17 +669,20 @@ html {
 
 .NotFound {
     position: relative;
-    overflow: hidden;
 }
 
 .NotFound::before {
     content: "";
-    position: absolute;
-    inset: 0;
+    position: fixed;
+    right: 3vw;
+    bottom: 6vh;
     z-index: 0;
+    width: min(360px, 40vw);
+    height: min(360px, 40vw);
     pointer-events: none;
-    background: url("/404-quill-ink.jpg") center 62% / min(460px, 72vw) no-repeat;
-    opacity: 0.38;
+    background: url("/404-quill-ink.jpg") center / contain no-repeat;
+    mix-blend-mode: multiply;
+    opacity: 0.92;
 }
 
 .NotFound > * {
@@ -680,7 +691,7 @@ html {
 }
 
 .dark .NotFound::before {
-    opacity: 0.16;
+    opacity: 0.4;
 }
 
 .NotFound .link {
@@ -884,9 +895,9 @@ a.note-cover:hover {
     color: var(--kr-ink-2);
 }
 
-.interview-hub-page .container,
-.interview-hub-page .content,
-.interview-hub-page .content-container {
+.interview-hub-page .VPDoc .container,
+.interview-hub-page .VPDoc .content,
+.interview-hub-page .VPDoc .content-container {
     max-width: none !important;
 }
 
