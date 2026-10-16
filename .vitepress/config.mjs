@@ -67,6 +67,8 @@ export default defineConfig({
       { text: '前端',   items: [  //启用items即为展示下拉框
           { text: 'HTML', link: '/frontEnd/html/' },
           { text: 'JavaScript', link: '/frontEnd/js/' },
+          { text: 'Vue', link: '/frontEnd/vue/' },
+          { text: 'React', link: '/frontEnd/react/' },
         ]
       },
       { text: 'DevOps', items: [
