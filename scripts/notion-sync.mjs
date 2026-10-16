@@ -551,6 +551,16 @@ async function syncPage(notion, page, localIndex, opts) {
       tail = null
     } else if (tail) {
       result.warnings.push(`${opts.dryRun ? '将把' : '已把'} ${relFromRoot(tail.abs)} 的 next 指向本文`)
+    } else {
+      const indexAbs = path.join(path.dirname(fileAbs), 'index.md')
+      if (
+        fs.existsSync(indexAbs) &&
+        !isProtected(indexAbs) &&
+        String(fmValue(readMarkdown(indexAbs).fm, 'notion_sync')) !== 'false'
+      ) {
+        tail = { abs: indexAbs, text: '章节介绍' }
+        result.warnings.push(`${opts.dryRun ? '将把' : '已把'} ${relFromRoot(indexAbs)} 的 next 指向本文`)
+      }
     }
   }
 
