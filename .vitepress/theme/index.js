@@ -9,7 +9,7 @@ import BackToTop from './components/BackToTop.vue'
 import DocMeta from './components/DocMeta.vue'
 import FocusReading from './components/FocusReading.vue'
 import WeChatQR from './components/WeChatQR.vue'
-import { bindCopyCheck } from './copyCheck.js'
+import { bindCopyCheck, polishCopyButtons } from './copyCheck.js'
 import { bindSectionAccordionLinks, mountSectionAccordion } from './sectionAccordion.js'
 import { isCoverTransition } from './coverTransition.js'
 import './style.css'
@@ -35,12 +35,16 @@ export default {
         onMounted(() => {
           attachZoom()
           mountSectionAccordion()
+          polishCopyButtons()
         })
         watch(
           () => route.path,
           () => {
-            nextTick(attachZoom)
-            mountSectionAccordion()
+            nextTick(() => {
+              attachZoom()
+              mountSectionAccordion()
+              polishCopyButtons()
+            })
           },
           { flush: 'post' }
         )

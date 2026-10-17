@@ -53,13 +53,21 @@ export default defineConfig({
     image: {
         // 图片懒加载
         lazyLoading: true
-    }
+    },
+    // 去掉原生 title，改用自定义悬浮提示
+    codeCopyButtonTitle: '',
   },
   navbar: true,
   themeConfig: {
     docFooter: { prev: '上一篇', next: '下一篇' },
     logo: '/logo.svg',
     outlineTitle:'文章目录',
+    notFound: {
+      title: '没有找到这一页',
+      quote: '链接可能写错了，或者这篇还没放上来。回首页，或者用上面的搜索找一篇写完的笔记。',
+      linkLabel: '返回首页',
+      linkText: '回首页',
+    },
     outline:[2,6],
     // https://vitepress.dev/reference/default-theme-config
     nav: [
@@ -67,6 +75,8 @@ export default defineConfig({
       { text: '前端',   items: [  //启用items即为展示下拉框
           { text: 'HTML', link: '/frontEnd/html/' },
           { text: 'JavaScript', link: '/frontEnd/js/' },
+          { text: 'Vue', link: '/frontEnd/vue/' },
+          { text: 'React', link: '/frontEnd/react/' },
         ]
       },
       { text: 'DevOps', items: [

@@ -2,7 +2,15 @@
  * 复制成功后画一笔对勾，稍停再回到复制图标。
  * VitePress 默认会把「已复制」留两秒，这里提前收回。
  */
+export function polishCopyButtons() {
+  document.querySelectorAll('div[class*="language-"] > button.copy').forEach((button) => {
+    button.removeAttribute('title')
+    if (!button.getAttribute('aria-label')) button.setAttribute('aria-label', '复制')
+  })
+}
+
 export function bindCopyCheck() {
+  polishCopyButtons()
   window.addEventListener('click', (event) => {
     const button = event.target instanceof Element
       ? event.target.closest('div[class*="language-"] > button.copy')

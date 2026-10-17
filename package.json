@@ -1,12 +1,15 @@
 {
   "devDependencies": {
+    "@notionhq/client": "^5.27.0",
+    "notion-to-md": "^3.1.9",
     "vite": "^5.4.11",
     "vitepress": "^1.2.2"
   },
   "scripts": {
     "docs:dev": "vitepress dev --port 5176",
     "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "docs:preview": "vitepress preview",
+    "notion:sync": "node scripts/notion-sync.mjs"
   },
   "dependencies": {
     "medium-zoom": "^1.1.0"

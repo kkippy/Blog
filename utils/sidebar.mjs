@@ -8,7 +8,7 @@ const docsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const CONTENT_DIRS = ["frontEnd", "DevOps", "exam"];
 
 // 从 frontmatter 中读取 prev/next 链接，用于恢复作者在文章里声明的阅读顺序
-function readFrontmatterLinks(filePath) {
+export function readFrontmatterLinks(filePath) {
     const content = fs.readFileSync(filePath, "utf-8");
     const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
     if (!match) return { prev: null, next: null };
@@ -21,7 +21,7 @@ function readFrontmatterLinks(filePath) {
 }
 
 // 同目录内按 prev/next 链排序；不在链上的文件按拼音/字母排在后面
-function orderFiles(dir, files) {
+export function orderFiles(dir, files) {
     const byLink = new Map(files.map((f) => [f.link, f]));
     const nextMap = new Map();
 
