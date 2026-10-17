@@ -21,7 +21,7 @@ const toPosix = (p) => p.split(path.sep).join('/')
 const relFromRoot = (abs) => toPosix(path.relative(root, abs))
 const plain = (richText) => (richText || []).map((t) => t.plain_text).join('')
 const sha256 = (s) => crypto.createHash('sha256').update(s).digest('hex')
-const normalizeBody = (s) => s.replace(/\r\n/g, '\n').replace(/\s+$/, '')
+const normalizeBody = (s) => s.replace(/\r\n/g, '\n').replace(/^\n+/, '').replace(/\s+$/, '')
 const yamlQuote = (s) => `'${String(s).replace(/[\r\n]+/g, ' ').replace(/'/g, "''")}'`
 const laterOf = (a, b) => (new Date(a) >= new Date(b) ? a : b)
 const sameTime = (a, b) => !!a && !!b && new Date(a).getTime() === new Date(b).getTime()
@@ -269,7 +269,34 @@ function readPage(page) {
   }
 }
 
-// 外层页面正文只有一个子页面 / 页面链接时，把那个页面当作正文来源
+function pageTitleOf(page) {
+  const titleProp = Object.values(page.properties || {}).find((p) => p.type === 'title')
+  return (titleProp ? plain(titleProp.title) : page.child_page?.title || '').trim()
+}
+
+async function findSameTitlePages(notion, page) {
+  if (!page.title) return []
+  const results = await collect((cursor) =>
+    notion.search({
+      query: page.title,
+      page_size: 20,
+      start_cursor: cursor,
+      filter: { property: 'object', value: 'page' },
+    })
+  )
+  const out = []
+  for (const r of results) {
+    if (r.object !== 'page') continue
+    if (normalizeId(r.id) === page.id) continue
+    if (r.archived || r.in_trash) continue
+    if (pageTitleOf(r) === page.title) out.push(r)
+  }
+  return out
+}
+
+// 外层页面正文只有一个子页面 / 页面链接时，把那个页面当作正文来源。
+// 数据库行本身是空的、但工作区里有且仅有一个同名页面时，也用那个页面当正文
+// （常见情况：笔记写在独立页面里，数据库只用来标栏目和发布状态）。
 async function resolveSource(notion, page) {
   const blocks = await collect((cursor) =>
     notion.blocks.children.list({ block_id: page.rawId, page_size: 100, start_cursor: cursor })
@@ -278,24 +305,58 @@ async function resolveSource(notion, page) {
     (b) => !(b.type === 'paragraph' && !plain(b.paragraph.rich_text).trim() && !b.has_children)
   )
   let target = null
+  let via = null
   if (meaningful.length === 1) {
     const b = meaningful[0]
-    if (b.type === 'child_page') target = b.id
-    else if (b.type === 'link_to_page' && b.link_to_page.type === 'page_id') target = b.link_to_page.page_id
-    else if (b.type === 'paragraph' && !b.has_children) {
+    if (b.type === 'child_page') {
+      target = b.id
+      via = 'child'
+    } else if (b.type === 'link_to_page' && b.link_to_page.type === 'page_id') {
+      target = b.link_to_page.page_id
+      via = 'link'
+    } else if (b.type === 'paragraph' && !b.has_children) {
       const parts = b.paragraph.rich_text.filter((t) => t.plain_text.trim())
       if (parts.length === 1 && parts[0].type === 'mention' && parts[0].mention.type === 'page') {
         target = parts[0].mention.page.id
+        via = 'mention'
+      }
+    }
+  }
+  if (!target && meaningful.length === 0) {
+    let twins = []
+    try {
+      twins = await findSameTitlePages(notion, page)
+    } catch (e) {
+      return {
+        blockId: page.rawId,
+        lastEdited: page.lastEdited,
+        expandedFrom: null,
+        skipReason: `数据库这一行没有正文，搜索同名页面失败：${safeError(e)}`,
+      }
+    }
+    if (twins.length === 1) {
+      target = twins[0].id
+      via = 'same-title'
+    } else if (twins.length > 1) {
+      return {
+        blockId: page.rawId,
+        lastEdited: page.lastEdited,
+        expandedFrom: null,
+        skipReason: `数据库这一行没有正文，工作区里有 ${twins.length} 个同名页面，无法自动选择`,
       }
     }
   }
   if (!target) return { blockId: page.rawId, lastEdited: page.lastEdited, expandedFrom: null }
   const child = await notion.pages.retrieve({ page_id: target })
-  const childTitle = plain(Object.values(child.properties || {}).find((p) => p.type === 'title')?.title)
+  const childTitle = pageTitleOf(child) || page.title
+  const label =
+    via === 'same-title'
+      ? `数据库这一行没有正文，已展开工作区同名页面「${childTitle}」作为正文`
+      : `正文只有一个子页面，已展开「${childTitle}」作为正文`
   return {
     blockId: target,
     lastEdited: laterOf(page.lastEdited, child.last_edited_time),
-    expandedFrom: childTitle || target,
+    expandedFrom: label,
   }
 }
 
@@ -307,7 +368,9 @@ function escapeText(s) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/\{\{/g, '<span v-pre>{{</span>')
+    // 花括号既会被 Vue 当成插值，也会被 markdown-it-attrs 吃掉
+    .replace(/\{/g, '&#123;')
+    .replace(/\}/g, '&#125;')
 }
 
 // Notion 段落里的软换行（Shift+Enter）在 Markdown 里会被合并成一行
@@ -499,7 +562,8 @@ async function syncPage(notion, page, localIndex, opts) {
   }
 
   const source = await resolveSource(notion, page)
-  if (source.expandedFrom) result.warnings.push(`正文只有一个子页面，已展开「${source.expandedFrom}」作为正文`)
+  if (source.skipReason) return skip(source.skipReason)
+  if (source.expandedFrom) result.warnings.push(source.expandedFrom)
 
   if (local) {
     const unchanged = sameTime(fmValue(local.fm, 'notion_last_edited'), source.lastEdited)
@@ -545,7 +609,7 @@ async function syncPage(notion, page, localIndex, opts) {
     const prev = tail
       ? { text: tail.text, link: docLink(tail.abs) }
       : { text: '章节介绍', link: `/${dirRel}/index` }
-    chain = linkBlock('prev', prev.text, prev.link)
+    chain = [...linkBlock('prev', prev.text, prev.link), 'next: false']
     if (tail && (isProtected(tail.abs) || String(fmValue(readMarkdown(tail.abs).fm, 'notion_sync')) === 'false')) {
       result.warnings.push(`上一篇 ${relFromRoot(tail.abs)} 受保护，没有修改它的 next，侧边栏会按拼音排序`)
       tail = null
@@ -562,6 +626,10 @@ async function syncPage(notion, page, localIndex, opts) {
         result.warnings.push(`${opts.dryRun ? '将把' : '已把'} ${relFromRoot(indexAbs)} 的 next 指向本文`)
       }
     }
+  } else if (!/^next:/m.test(local.fm || '')) {
+    // 栏目里最后一篇不写 next，避免 VitePress 用扁平侧边栏跳到下一个栏目
+    const tailNow = findChainTail(path.dirname(fileAbs))
+    if (tailNow && path.resolve(tailNow.abs) === path.resolve(fileAbs)) chain = ['next: false']
   }
 
   result.status = local ? 'updated' : 'created'
