@@ -539,6 +539,15 @@ html {
     align-items: center;
 }
 
+.paper-home .writing-card {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 252, 246, 0.1),
+        0 22px 44px rgba(12, 32, 28, 0.22),
+        10px 14px 0 rgba(15, 46, 40, 0.26);
+    transform-origin: center bottom;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
 .writing-card__kicker {
     margin: 0;
     font-size: 15px;
@@ -569,6 +578,13 @@ html {
     line-height: 1.9;
 }
 
+.writing-card__meta {
+    margin-top: 14px;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: #e0b57a;
+}
+
 .vp-doc .writing-card__link,
 .writing-card__link {
     display: inline-block;
@@ -591,6 +607,32 @@ html {
 
 .note-block {
     margin-top: 52px;
+}
+
+.note-tabs {
+    display: flex;
+    gap: 6px;
+    margin: 0 0 8px;
+}
+
+.note-tab {
+    margin: 0;
+    padding: 8px 16px 10px;
+    border: 1px solid transparent;
+    border-bottom: 0;
+    border-radius: 10px 10px 0 0;
+    background: transparent;
+    color: var(--kr-ink-2);
+    font: inherit;
+    font-size: 16px;
+    letter-spacing: 0;
+    cursor: pointer;
+}
+
+.note-tab[aria-selected='true'] {
+    color: var(--kr-ink-1);
+    background: rgba(239, 224, 204, 0.7);
+    border-color: rgba(110, 74, 36, 0.12);
 }
 
 .note-block h3 {
@@ -707,7 +749,7 @@ a.note-cover:hover .note-cover__art {
 }
 
 .note-covers--small .note-cover__art {
-    opacity: 0.5;
+    opacity: 0.58;
 }
 
 .note-covers--small .note-cover::after {
@@ -759,6 +801,125 @@ a.note-cover:hover .note-cover__art {
     color: var(--kr-ink-2);
 }
 
+.note-cover--book {
+    aspect-ratio: auto;
+    padding: 0 0 18px;
+    background-image: none;
+    overflow: hidden;
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+}
+
+.note-cover--book::before,
+.note-cover--book::after {
+    content: none;
+}
+
+.note-cover__face {
+    position: relative;
+    display: block;
+    aspect-ratio: 1 / 0.7;
+    overflow: hidden;
+    background-color: inherit;
+    background-image: linear-gradient(rgba(110, 74, 36, 0.055) 1px, transparent 1px);
+    background-size: 100% 28px;
+    background-position: 0 12px;
+}
+
+.note-cover__face::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 14px;
+    z-index: 2;
+    background: linear-gradient(90deg, rgba(110, 74, 36, 0.18), rgba(110, 74, 36, 0));
+}
+
+.note-cover__face::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 55%, rgba(246, 240, 226, 0.55) 100%);
+}
+
+.note-cover--book .note-cover__kicker,
+.note-cover--book .note-cover__title,
+.note-cover--book .note-cover__excerpt,
+.note-cover--book .note-cover__mins {
+    padding-right: 18px;
+    padding-left: 22px;
+}
+
+.note-cover--book .note-cover__kicker {
+    margin-top: 16px;
+}
+
+.note-cover--book .note-cover__title {
+    font-size: 22px;
+    word-break: keep-all;
+}
+
+.note-cover__excerpt {
+    position: relative;
+    z-index: 3;
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--kr-ink-2);
+}
+
+.note-cover__mins {
+    position: relative;
+    z-index: 3;
+    margin-top: 8px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--kr-ink-3);
+}
+
+.note-drafts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.note-drafts li {
+    padding: 14px 2px;
+    border-bottom: 1px solid var(--kr-line);
+    color: var(--kr-ink-2);
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .paper-home a.note-cover--book {
+        transform: perspective(920px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+        transform-style: preserve-3d;
+        transition: transform 140ms ease, box-shadow 200ms ease;
+    }
+
+    .paper-home a.note-cover--book:hover {
+        transform: perspective(920px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+        box-shadow: inset 0 0 0 1px rgba(110, 74, 36, 0.14), 0 18px 32px rgba(92, 64, 32, 0.14);
+    }
+}
+
+.paper-home .writing-card.is-lifting {
+    transform: translateY(-8px);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 252, 246, 0.1),
+        0 28px 52px rgba(12, 32, 28, 0.28),
+        10px 18px 0 rgba(15, 46, 40, 0.26);
+}
+
+.paper-home a.note-cover--book.is-lifting {
+    transform: perspective(920px) translateY(-10px) rotateX(5deg);
+}
+
 .interview-hub-page .container,
 .interview-hub-page .content,
 .interview-hub-page .content-container {
@@ -779,6 +940,18 @@ a.note-cover:hover .note-cover__art {
 
 .dark .writing-card {
     box-shadow: inset 0 0 0 1px rgba(233, 228, 216, 0.12);
+}
+
+.dark .paper-home .writing-card {
+    box-shadow:
+        inset 0 0 0 1px rgba(233, 228, 216, 0.12),
+        0 22px 44px rgba(0, 0, 0, 0.35),
+        10px 14px 0 rgba(8, 18, 16, 0.45);
+}
+
+.dark .note-tab[aria-selected='true'] {
+    background: rgba(42, 51, 48, 0.9);
+    border-color: rgba(233, 228, 216, 0.12);
 }
 
 .dark .note-cover {
@@ -861,8 +1034,20 @@ a.note-cover:hover .note-cover__art {
         grid-template-columns: 1fr 1fr;
     }
 
-    .note-cover {
+    .note-cover:not(.note-cover--book) {
         padding: 16px 16px 14px 22px;
+    }
+
+    .paper-home .note-covers {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .note-cover--book .note-cover__title {
+        font-size: 18px;
+    }
+
+    .note-cover__excerpt {
+        font-size: 13px;
     }
 
     .note-covers--small .note-cover__title {
@@ -873,8 +1058,14 @@ a.note-cover:hover .note-cover__art {
 
 @media (prefers-reduced-motion: reduce) {
     a.note-cover:hover,
-    a.note-cover:hover .note-cover__art {
+    a.note-cover:hover .note-cover__art,
+    .paper-home a.note-cover--book,
+    .paper-home a.note-cover--book:hover,
+    .paper-home .writing-card,
+    .paper-home .writing-card.is-lifting,
+    .paper-home a.note-cover--book.is-lifting {
         transform: none;
+        transition: none;
     }
 }
 

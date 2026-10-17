@@ -12,10 +12,13 @@ function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
+function wait(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms))
+}
+
 /**
  * VitePress 在 window 的捕获阶段就处理点击，组件里的 click 赶不上。
- * 松开按键时先拿掉 href，让这次点击不再被它接走，再淡入文章。
- * 封面和标题形状差得太远，拉在一起会叠成两层字，所以只做整页淡入淡出，导航留在原地。
+ * 松开按键时先拿掉 href，封面抬一下，再淡入文章。导航留在原地。
  */
 export function useCoverTransition() {
   const router = useRouter()
@@ -28,26 +31,29 @@ export function useCoverTransition() {
     const href = link?.getAttribute?.('href')
     if (!href || active) return
 
+    const source = link.closest('.note-cover, .writing-card') || link
+    source.classList.add('is-lifting')
     link.removeAttribute('href')
     active = true
 
-    let transition
-    try {
-      transition = document.startViewTransition(async () => {
-        await router.go(href)
-        await nextTick()
-        mountSectionAccordion()
-      })
-    } catch (error) {
-      active = false
-      link.setAttribute('href', href)
-      throw error
-    }
-
     const finish = () => {
       active = false
+      source.classList.remove('is-lifting')
       if (link.isConnected && !link.getAttribute('href')) link.setAttribute('href', href)
     }
-    transition.finished.then(finish, finish)
+
+    wait(180)
+      .then(() => {
+        const transition = document.startViewTransition(async () => {
+          await router.go(href)
+          await nextTick()
+          mountSectionAccordion()
+        })
+        transition.finished.then(finish, finish)
+      })
+      .catch((error) => {
+        finish()
+        throw error
+      })
   }
 }
