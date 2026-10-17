@@ -1,5 +1,6 @@
 ---
 title: Promise 面试题
+pageClass: section-accordion
 ---
 
 # Promise 面试题

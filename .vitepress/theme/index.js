@@ -7,7 +7,11 @@ import HomePage from './components/HomePage.vue'
 import ReadingProgress from './components/ReadingProgress.vue'
 import BackToTop from './components/BackToTop.vue'
 import DocMeta from './components/DocMeta.vue'
+import FocusReading from './components/FocusReading.vue'
 import WeChatQR from './components/WeChatQR.vue'
+import { bindCopyCheck } from './copyCheck.js'
+import { bindSectionAccordionLinks, mountSectionAccordion } from './sectionAccordion.js'
+import { isCoverTransition } from './coverTransition.js'
 import './style.css'
 
 /** @type {import('vitepress').Theme} */
@@ -28,15 +32,48 @@ export default {
             margin: 24,
           })
         }
-        onMounted(() => nextTick(attachZoom))
-        watch(() => route.path, () => nextTick(attachZoom))
+        onMounted(() => {
+          attachZoom()
+          mountSectionAccordion()
+        })
+        watch(
+          () => route.path,
+          () => {
+            nextTick(attachZoom)
+            mountSectionAccordion()
+          },
+          { flush: 'post' }
+        )
+
+        bindCopyCheck()
+        bindSectionAccordionLinks()
+
+        // 只在路径变化后播一次正文入场。锚点跳转不改 route.path，不会触发。
+        // 封面过渡自己负责这段位移，不再叠一次整页淡入。
+        watch(
+          () => route.path,
+          async () => {
+            if (isCoverTransition()) return
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+            await nextTick()
+            const target = document.querySelector('.vp-doc, .VPHome')
+            if (!target) return
+            target.classList.remove('kr-page-enter')
+            void target.offsetWidth
+            target.classList.add('kr-page-enter')
+          },
+          { flush: 'post' }
+        )
       }
 
       return () => {
         const slots = {
           // https://vitepress.dev/guide/extending-default-theme#layout-slots
           'layout-top': () => [h(ReadingProgress), h(BackToTop)],
-          'doc-before': () => h(DocMeta),
+          'doc-before': () =>
+            frontmatter.value.layout === 'home'
+              ? null
+              : h('div', { class: 'doc-before-row' }, [h(DocMeta), h(FocusReading)]),
           'nav-bar-content-after': () => h(WeChatQR),
           'nav-screen-content-after': () => h(WeChatQR),
         }

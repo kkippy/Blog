@@ -21,8 +21,12 @@ function getReadingStats(markdown) {
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   lang: 'zh-CN',
-  // 暗色主题尚未适配自定义配色，先关闭切换，避免半亮半暗的撕裂效果
-  appearance: false,
+  vite: {
+    server: {
+      // 允许通过临时隧道域名预览开发服务器
+      allowedHosts: [".loca.lt", ".trycloudflare.com"],
+    },
+  },
   outDir: './dist',
   head:[["link", { rel: "icon", href: "/logo.svg" }]],
   title: "KRABBY Personal Blogs",

@@ -58,7 +58,7 @@ onBeforeUnmount(() => {
 
 .reading-progress__bar {
   height: 100%;
-  background: linear-gradient(90deg, #1c5a4d, #d59a55);
+  background: linear-gradient(90deg, var(--kr-brand), var(--kr-accent));
   border-radius: 0 999px 999px 0;
   transition: width 0.1s linear;
 }

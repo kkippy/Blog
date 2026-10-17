@@ -1,213 +1,125 @@
 <script setup>
-const proofPoints = [
-  { value: '18+', label: '持续沉淀的内容' },
-  { value: '3', label: '核心知识栏目' },
-  { value: 'Now', label: '正在整理 Promise 面试题' },
-]
+import { ref } from 'vue'
+import { useCoverTransition } from '../coverTransition.js'
 
-const brandTags = [
-  'Interview Notes',
-  'Frontend Fundamentals',
-  'DevOps Practice',
-  'Structured Knowledge',
-  'Personal Brand',
-  'Readable Writing',
-]
+const onOpen = useCoverTransition()
+const shelf = ref('done')
 
-const columns = [
+const finished = [
   {
-    index: '01',
-    title: '面试题整理',
-    link: '/exam/interview/',
-    description: '把零散的高频题目重写为结构化文档，适合复习、查漏补缺和二次回顾。',
-    meta: 'Promise / 高频题 / Interview',
+    kicker: '前端',
+    title: 'let、const、var',
+    href: '/frontEnd/js/let、const、var三剑客',
+    cover: '/covers/cover-js-let.webp',
+    excerpt: '三种声明差在哪，面试时容易混。',
+    minutes: 4,
   },
   {
-    index: '02',
-    title: '前端笔记',
-    link: '/frontEnd/js/',
-    description: '围绕 HTML、JavaScript 与基础概念做长期可复用的知识沉淀。',
-    meta: 'HTML / JavaScript / 基础',
+    kicker: '前端',
+    title: 'HTML5 语义化',
+    href: '/frontEnd/html/基础知识',
+    cover: '/covers/cover-html.webp',
+    excerpt: '标签先说出结构，再谈样式。',
+    minutes: 3,
   },
   {
-    index: '03',
-    title: 'DevOps 笔记',
-    link: '/DevOps/docker/',
-    description: '记录 Linux、Docker 与服务管理中的实操经验和排障过程。',
-    meta: 'Linux / Docker / 实战',
+    kicker: 'Docker',
+    title: 'Docker 初印象',
+    href: '/DevOps/docker/Docker初印象',
+    cover: '/covers/cover-docker.webp',
+    excerpt: '先建立容器是什么，再碰命令。',
+    minutes: 5,
   },
 ]
 
-const featuredEntry = {
-  title: 'Promise 面试题',
-  link: '/exam/interview/Promise面试题',
-  intro: '把 Notion 中的原始笔记重构成可阅读、可背诵、可快速复盘的一篇面试文档。',
-  summary:
-    '覆盖 Promise 状态流转、then / catch / finally、静态方法、async / await 与执行顺序等高频问题。',
+const drafts = ['事件循环', '闭包', 'this', '原型链']
+
+function canTilt() {
+  return (
+    window.matchMedia('(pointer: fine)').matches &&
+    window.matchMedia('(hover: hover)').matches &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
 }
 
-const latestEntries = [
-  {
-    type: 'Interview',
-    title: 'Promise 面试题',
-    link: '/exam/interview/Promise面试题',
-    desc: '适合作为 JavaScript 异步能力的系统复盘入口。',
-  },
-  {
-    type: 'DevOps',
-    title: 'Docker 初印象',
-    link: '/DevOps/docker/Docker初印象',
-    desc: '从容器的基本认知切入，建立 DevOps 学习的第一层地图。',
-  },
-  {
-    type: 'Frontend',
-    title: 'let、const、var 三剑客',
-    link: '/frontEnd/js/let、const、var三剑客',
-    desc: '从作用域和变量提升理解声明方式的真实差异。',
-  },
-]
+function onTilt(event) {
+  if (!canTilt()) return
+  const el = event.currentTarget
+  const box = el.getBoundingClientRect()
+  const x = (event.clientX - box.left) / box.width
+  const y = (event.clientY - box.top) / box.height
+  el.style.setProperty('--tilt-x', `${((0.5 - y) * 5).toFixed(2)}deg`)
+  el.style.setProperty('--tilt-y', `${((x - 0.5) * 6).toFixed(2)}deg`)
+}
 
-const principles = [
-  '先收集，再重写，把零散笔记改造成可以复习的文档。',
-  '优先整理高频、高复用知识，而不是只记录过程。',
-  '坚持结构化输出：概念、规则、示例、易错点。',
-]
+function resetTilt(event) {
+  event.currentTarget.style.setProperty('--tilt-x', '0deg')
+  event.currentTarget.style.setProperty('--tilt-y', '0deg')
+}
 </script>
 
 <template>
-  <div class="signature-home">
-    <section class="signature-hero">
-      <div class="hero-copy">
-        <p class="hero-kicker">KRABBY / PERSONAL BRAND BLOG</p>
-        <h1>把博客写成一份持续生长的个人作品集。</h1>
-        <p class="hero-lead">
-          这里不只是文章归档，而是把前端、DevOps 与面试题整理成一套可阅读、可展示、可复习的知识资产。
-        </p>
+  <div class="paper-page paper-home">
+    <h1>不会就学，<br>就这么简单。</h1>
+    <p class="paper-lead">做前端，也在学 Docker。笔记和面试题都放这儿，写完的才能点。给自己复习，也给别人看看。</p>
 
-        <div class="hero-actions">
-          <a class="hero-button hero-button--primary" href="/exam/interview/">进入面试题</a>
-          <a class="hero-button hero-button--secondary" href="/frontEnd/js/">查看前端笔记</a>
-        </div>
-
-        <div class="proof-strip">
-          <div v-for="item in proofPoints" :key="item.label" class="proof-item">
-            <strong>{{ item.value }}</strong>
-            <span>{{ item.label }}</span>
-          </div>
-        </div>
+    <section class="writing-card">
+      <div>
+        <p class="writing-card__kicker">摊开的一本 · 可以开始读</p>
+        <h2>Promise 只有三种状态。变了，就不会再变。</h2>
+        <p>pending、fulfilled、rejected。then 和 catch 的返回值，面试时很容易说反。</p>
+        <p class="writing-card__meta">大约 6 分钟</p>
+        <a class="writing-card__link" href="/exam/interview/Promise面试题" @pointerup="onOpen">打开这篇 →</a>
       </div>
-
-      <div class="hero-composition">
-        <div class="brand-frame">
-          <div class="brand-frame__top">
-            <p class="frame-label">Editorial Snapshot</p>
-            <span class="frame-note">Knowledge, writing, and proof of work</span>
-          </div>
-
-          <div class="brand-frame__body">
-            <div class="brand-portrait">
-              <div class="brand-portrait__halo"></div>
-              <img src="/avatar.png" alt="KRABBY avatar" />
-            </div>
-
-            <div class="brand-note">
-              <p class="brand-note__eyebrow">Current Focus</p>
-              <h2>用一篇篇高质量整理文档，逐步建立个人可信度。</h2>
-              <p>
-                当前重点是把 Promise 面试题和基础知识重写成结构清晰、便于回顾的内容，让博客既能服务学习，也能体现方法论。
-              </p>
-            </div>
-          </div>
-
-          <div class="brand-frame__bottom">
-            <a class="frame-entry" :href="featuredEntry.link">
-              <span>Latest Feature</span>
-              <strong>{{ featuredEntry.title }}</strong>
-            </a>
-            <p class="frame-summary">
-              用结构化写作而不是简单摘录，把每一篇文章都做成长期可复用的知识单元。
-            </p>
-          </div>
-        </div>
-
-        <div class="floating-manifesto">
-          <span>Method</span>
-          <p>Collect → Rewrite → Structure → Revisit</p>
-        </div>
-      </div>
+      <img class="writing-card__mascot" src="/mascot.png" alt="" />
     </section>
 
-    <section class="signature-ribbon">
-      <p class="signature-ribbon__label">Focus Map</p>
-      <div class="signature-ribbon__tags">
-        <span v-for="tag in brandTags" :key="tag">{{ tag }}</span>
+    <section class="note-block">
+      <div class="note-tabs" role="tablist" aria-label="笔记目录">
+        <button
+          type="button"
+          class="note-tab"
+          role="tab"
+          :aria-selected="shelf === 'done'"
+          @click="shelf = 'done'"
+        >
+          写完的
+        </button>
+        <button
+          type="button"
+          class="note-tab"
+          role="tab"
+          :aria-selected="shelf === 'draft'"
+          @click="shelf = 'draft'"
+        >
+          还在写
+        </button>
       </div>
-    </section>
+      <p class="note-block__hint">{{ shelf === 'done' ? '可以从头读到尾。' : '名字先留着，还不能点。' }}</p>
 
-    <section class="signature-grid signature-grid--primary">
-      <a class="spotlight-card" :href="featuredEntry.link">
-        <p class="spotlight-card__eyebrow">Featured Reading</p>
-        <h2>{{ featuredEntry.title }}</h2>
-        <p class="spotlight-card__intro">{{ featuredEntry.intro }}</p>
-        <p class="spotlight-card__summary">{{ featuredEntry.summary }}</p>
-        <span class="spotlight-card__action">查看文章</span>
-      </a>
-
-      <div class="column-panel">
-        <div class="section-heading">
-          <p>Core Sections</p>
-          <h2>内容结构不做铺满式罗列，而是先强调长期价值。</h2>
-        </div>
-
-        <div class="column-list">
-          <a v-for="column in columns" :key="column.title" class="column-item" :href="column.link">
-            <span class="column-item__index">{{ column.index }}</span>
-            <div class="column-item__body">
-              <strong>{{ column.title }}</strong>
-              <p>{{ column.description }}</p>
-              <span>{{ column.meta }}</span>
-            </div>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <section class="signature-grid signature-grid--secondary">
-      <div class="manifesto-panel">
-        <div class="section-heading">
-          <p>Writing Method</p>
-          <h2>博客的目标不是堆积，而是形成可反复调用的认知资产。</h2>
-        </div>
-
-        <ol class="principle-list">
-          <li v-for="item in principles" :key="item">{{ item }}</li>
-        </ol>
+      <div v-if="shelf === 'done'" class="note-covers">
+        <a
+          v-for="item in finished"
+          :key="item.href"
+          class="note-cover note-cover--book"
+          :href="item.href"
+          @pointermove="onTilt"
+          @pointerleave="resetTilt"
+          @pointerup="onOpen"
+        >
+          <span class="note-cover__face">
+            <img class="note-cover__art" :src="item.cover" alt="" loading="lazy" decoding="async" />
+          </span>
+          <span class="note-cover__kicker">{{ item.kicker }}</span>
+          <span class="note-cover__title">{{ item.title }}</span>
+          <span class="note-cover__excerpt">{{ item.excerpt }}</span>
+          <span class="note-cover__mins">大约 {{ item.minutes }} 分钟</span>
+        </a>
       </div>
 
-      <div class="entry-panel">
-        <div class="section-heading">
-          <p>Selected Reads</p>
-          <h2>第一次进入博客，可以先从这些内容快速建立认知地图。</h2>
-        </div>
-
-        <div class="entry-list">
-          <a v-for="entry in latestEntries" :key="entry.title" class="entry-row" :href="entry.link">
-            <span class="entry-row__type">{{ entry.type }}</span>
-            <div class="entry-row__body">
-              <strong>{{ entry.title }}</strong>
-              <p>{{ entry.desc }}</p>
-            </div>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <section class="signature-cta">
-      <p class="signature-cta__eyebrow">Next</p>
-      <div class="signature-cta__content">
-        <h2>接下来，这里会继续向“前端基础 + DevOps + 面试整理”的品牌方向收拢。</h2>
-        <a href="/exam/interview/">从面试题部分开始阅读</a>
-      </div>
+      <ul v-else class="note-drafts">
+        <li v-for="title in drafts" :key="title">{{ title }}</li>
+      </ul>
     </section>
   </div>
 </template>
