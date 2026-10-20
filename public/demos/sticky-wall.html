@@ -9,6 +9,11 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Zhi+Mang+Xing&display=swap" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" />
   <style>
+    @property --cut {
+      syntax: "<length>";
+      inherits: true;
+      initial-value: 0px;
+    }
     :root {
       --cork: #8b6914;
       --cork-dark: #7a5c0f;
@@ -239,7 +244,8 @@
       --back: #c9a227;
       --r: 0deg;
       --pin: #c62828;
-      --curl: 84px;
+      --curl: 56px;
+      --cut: 0px;
       display: block;
       position: relative;
       width: 100%;
@@ -326,9 +332,29 @@
       box-shadow:
         3px 6px 10px rgb(0 0 0 / 0.18),
         inset 0 -2px 4px rgb(0 0 0 / 0.06);
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-      transition: clip-path 0.5s cubic-bezier(0.3, 0.7, 0.3, 1);
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - var(--cut)),
+        calc(100% - var(--cut)) 100%,
+        0 100%
+      );
+      transition: clip-path 0.55s cubic-bezier(0.22, 0.8, 0.36, 1);
     }
+    .paper::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(135deg, transparent 49.5%, rgb(0 0 0 / 0.1) 50%, rgb(255 255 255 / 0.18) 100%);
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .note:hover .paper::after,
+    .note:focus-visible .paper::after,
+    .note.is-open .paper::after { opacity: 0; }
     .kicker {
       margin: 0 0 8px;
       font-family: "Noto Sans SC", sans-serif;
@@ -353,107 +379,110 @@
       color: #2c2418;
     }
 
-    /* 右下角三角：沿对角线掀开，像从角落撕便签 */
+    /* 右下角：把 css3dlab 的多段铰链转 45°，纸是弯的，不是一块三角在翻面 */
     .curl {
       position: absolute;
       right: 0;
       bottom: 0;
       z-index: 4;
-      width: 18px;
-      height: 18px;
+      width: var(--cut);
+      height: var(--cut);
+      overflow: hidden;
       pointer-events: none;
-      transform-style: preserve-3d;
-      perspective: 240px;
-      transition: width 0.5s cubic-bezier(0.3, 0.7, 0.3, 1), height 0.5s cubic-bezier(0.3, 0.7, 0.3, 1);
+      perspective: 480px;
+      opacity: 0;
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
+      transition:
+        opacity 0.2s ease,
+        clip-path 0.5s ease,
+        width 0.5s cubic-bezier(0.22, 0.8, 0.36, 1),
+        height 0.5s cubic-bezier(0.22, 0.8, 0.36, 1);
     }
     .note:hover .curl,
     .note:focus-visible .curl,
     .note.is-open .curl {
-      width: var(--curl);
-      height: var(--curl);
-    }
-    .curl__sheet,
-    .curl__tip {
-      position: absolute;
-      inset: 0;
+      opacity: 1;
+      overflow: visible;
       transform-style: preserve-3d;
-      transform-origin: 0 100%;
-      clip-path: polygon(100% 0, 100% 100%, 0 100%);
-      backface-visibility: hidden;
+      clip-path: inset(-80px -80px -80px -80px);
     }
-    .curl__sheet {
-      background: linear-gradient(135deg, var(--c) 18%, var(--e) 58%, var(--back));
-      box-shadow: -6px 8px 14px rgb(40 18 2 / 0.18);
-      transition: transform 0.55s cubic-bezier(0.3, 0.7, 0.3, 1);
+    .curl__rig {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: calc(var(--cut) * 1.414);
+      transform-origin: right top;
+      transform: rotate(45deg);
+      transform-style: preserve-3d;
     }
-    .curl__tip {
-      top: 38%;
-      left: 38%;
-      background: linear-gradient(135deg, var(--e), var(--back));
-      transition: transform 0.55s cubic-bezier(0.3, 0.7, 0.3, 1);
+    .seg {
+      display: block;
+      position: relative;
+      width: 100%;
+      height: 18px;
+      background: var(--c);
+      transform-origin: 50% 0;
+      transform-style: preserve-3d;
+      transform: rotateX(6deg);
+      box-shadow: 0 1px 0 rgb(0 0 0 / 0.04);
+      transition: transform 0.55s cubic-bezier(0.22, 1.2, 0.36, 1);
     }
-    .curl__tip::after {
+    .seg > .seg {
+      position: absolute;
+      left: 0;
+      top: calc(100% - 2px);
+      margin: 0;
+    }
+    .s2 { height: 16px; background: linear-gradient(var(--c), var(--e)); transition-delay: 0.04s; }
+    .s3 {
+      height: 22px;
+      background: linear-gradient(var(--e) 10%, var(--back));
+      transition-delay: 0.08s;
+    }
+    .s3::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(315deg, rgb(255 255 255 / 0.45), transparent 62%);
-      opacity: 0.2;
-      transition: opacity 0.4s;
+      background: linear-gradient(180deg, rgb(255 255 255 / 0.35), transparent 70%);
+      opacity: 0.25;
+      pointer-events: none;
     }
     .curl__under {
       position: absolute;
       right: 0;
       bottom: 0;
-      width: 0;
-      height: 0;
-      border-bottom: 10px solid rgb(40 22 4 / 0.18);
-      border-left: 10px solid transparent;
-      transition: width 0.5s, height 0.5s, border-width 0.5s;
+      z-index: 1;
+      width: var(--cut);
+      height: var(--cut);
+      pointer-events: none;
+      background: radial-gradient(120% 120% at 100% 100%, rgb(40 18 2 / 0.42), transparent 72%);
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
     }
 
     .note:hover,
     .note:focus-visible,
     .note.is-open {
+      --cut: 56px;
       z-index: 6;
-      transform: rotate(calc(var(--r) * 0.35)) translateZ(12px);
+      transform: rotate(calc(var(--r) * 0.4)) rotateX(-8deg) rotateY(10deg) translateZ(10px);
     }
-    .note:hover .paper,
-    .note:focus-visible .paper,
-    .note.is-open .paper {
-      clip-path: polygon(
-        0 0,
-        100% 0,
-        100% calc(100% - var(--curl)),
-        calc(100% - var(--curl)) 100%,
-        0 100%
-      );
-    }
-    .note:hover .curl__sheet,
-    .note:focus-visible .curl__sheet,
-    .note.is-open .curl__sheet {
-      transform: rotate3d(1, -1, 0, 78deg);
-    }
-    .note:hover .curl__tip,
-    .note:focus-visible .curl__tip,
-    .note.is-open .curl__tip {
-      transform: rotate3d(1, -1, 0, 50deg);
-      transition-delay: 0.04s;
-    }
-    .note:hover .curl__tip::after,
-    .note:focus-visible .curl__tip::after,
-    .note.is-open .curl__tip::after { opacity: 1; }
-    .note:hover .curl__under,
-    .note:focus-visible .curl__under,
-    .note.is-open .curl__under {
-      border-bottom-width: var(--curl);
-      border-left-width: var(--curl);
-      border-bottom-color: rgb(40 22 4 / 0.28);
-    }
+    .note:hover .s1,
+    .note:focus-visible .s1,
+    .note.is-open .s1 { transform: rotateX(26deg); }
+    .note:hover .s2,
+    .note:focus-visible .s2,
+    .note.is-open .s2 { transform: rotateX(38deg); }
+    .note:hover .s3,
+    .note:focus-visible .s3,
+    .note.is-open .s3 { transform: rotateX(48deg); }
+    .note:hover .s3::after,
+    .note:focus-visible .s3::after,
+    .note.is-open .s3::after { opacity: 0.85; }
     .note:hover .shade,
     .note:focus-visible .shade,
     .note.is-open .shade {
-      opacity: 0.85;
-      transform: translateZ(-2px) translate(8px, 10px) scale(1.04);
+      opacity: 0.9;
+      transform: translateZ(-2px) translate(10px, 12px) scale(1.05);
     }
 
     .y { --c: #fff9a3; --e: #ffef70; --back: #c9a227; --pin: #c62828; }
@@ -498,21 +527,23 @@
     @media (prefers-reduced-motion: reduce) {
       .note,
       .paper,
-      .curl__sheet,
-      .curl__tip,
-      .curl__under,
+      .seg,
       .shade { transition: none !important; }
       .note:hover,
       .note:focus-visible,
       .note.is-open {
+        --cut: 0px;
         transform: rotate(var(--r)) translateZ(2px);
       }
-      .note:hover .curl__sheet,
-      .note:focus-visible .curl__sheet,
-      .note.is-open .curl__sheet,
-      .note:hover .curl__tip,
-      .note:focus-visible .curl__tip,
-      .note.is-open .curl__tip { transform: none; }
+      .note:hover .s1,
+      .note:focus-visible .s1,
+      .note.is-open .s1,
+      .note:hover .s2,
+      .note:focus-visible .s2,
+      .note.is-open .s2,
+      .note:hover .s3,
+      .note:focus-visible .s3,
+      .note.is-open .s3 { transform: rotateX(7deg); }
     }
   </style>
 </head>
@@ -525,7 +556,7 @@
           排版学 <a href="https://bythewei.dev/" target="_blank" rel="noreferrer">bythewei.dev</a>
           的软木板分栏；悬停剥离学
           <a href="https://css3dlab.edgarasneverdauskas.com/models/stickynotes/" target="_blank" rel="noreferrer">css3dlab</a>。
-          这是独立页，现有主页没改。写完的便签只放简介，点进去还是原来的文章。悬停时从右下角斜着撕开。
+          这是独立页。写完的便签只放简介，点进去进原文。右下角用多段铰链卷起来，不是一块三角翻面。
         </p>
       </div>
       <div class="font-switch" role="group" aria-label="便签中文字体">
@@ -559,7 +590,7 @@
               <h3>Promise 面试题</h3>
               <p>按面试复习整理：三种状态、链式调用、静态方法，还有 async / await 里容易说反的地方。</p>
             </div>
-            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
             <i class="curl__under"></i>
           </a>
 
@@ -570,7 +601,7 @@
               <h3>let、const、var</h3>
               <p>三种声明差在作用域、提升和能不能重复声明。var 能跨块，let / const 不能。</p>
             </div>
-            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
             <i class="curl__under"></i>
           </a>
 
@@ -581,7 +612,7 @@
               <h3>HTML5 语义化</h3>
               <p>用合理的标签说出结构。样式丢了也看得懂，也更利于搜索引擎和读屏。</p>
             </div>
-            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
             <i class="curl__under"></i>
           </a>
 
@@ -592,7 +623,7 @@
               <h3>Docker 初印象</h3>
               <p>容器把环境和配置打包带走。体积比虚拟机小，启动也更快，先建立这个印象。</p>
             </div>
-            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
             <i class="curl__under"></i>
           </a>
         </section>
@@ -607,7 +638,7 @@
               <h3>事件循环</h3>
               <p>宏任务和微任务怎么排队，浏览器什么时候去渲染。</p>
             </div>
-            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
             <i class="curl__under"></i>
           </article>
 
@@ -618,7 +649,7 @@
               <h3>闭包</h3>
               <p>函数把外层变量包在里面带走。面试常问它会不会把内存漏掉。</p>
             </div>
-            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
             <i class="curl__under"></i>
           </article>
 
@@ -629,7 +660,7 @@
               <h3>this</h3>
               <p>谁调用它，它就指向谁。箭头函数不自己长 this，沿外层找。</p>
             </div>
-            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
             <i class="curl__under"></i>
           </article>
 
@@ -640,7 +671,7 @@
               <h3>原型链</h3>
               <p>自己身上找不到的属性，就顺着原型往上问，一直问到 null。</p>
             </div>
-            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
             <i class="curl__under"></i>
           </article>
         </section>
@@ -648,7 +679,7 @@
     </div>
 
     <aside class="hint">
-      写完的便签点进去会打开原来的文章页。还在写的只留简介，没有链接。卷边是右下角沿对角线撕开，不再朝正前方翻。
+      卷边不靠动画库。GSAP 只能把同一套 transform 缓动得更顺，弯度还是 CSS 多段铰链在近似；真曲面要 WebGL，对目录页过重。
       文件在 <code>public/demos/sticky-wall.html</code>。
     </aside>
   </div>
