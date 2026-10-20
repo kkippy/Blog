@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>便签墙示例 · 不改现有页面</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Zhi+Mang+Xing&display=swap" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" />
+  <style>
+    :root {
+      --cork: #8b6914;
+      --cork-dark: #7a5c0f;
+      --cork-light: #9b7a20;
+      --navy: #1a1a2e;
+      --gold: #f0b847;
+      --ink: #1a1a1a;
+      --note-font: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+      --note-title: 20px;
+      --note-body: 14px;
+      --note-lh: 1.55;
+      --note-weight: 700;
+      --body-weight: 400;
+    }
+
+    html[data-font="sans"] {
+      --note-font: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+      --note-title: 19px;
+      --note-body: 13.5px;
+      --note-lh: 1.55;
+      --note-weight: 700;
+      --body-weight: 400;
+    }
+    html[data-font="kai"] {
+      --note-font: "LXGW WenKai", "LXGW WenKai Screen", "Noto Serif SC", serif;
+      --note-title: 21px;
+      --note-body: 15px;
+      --note-lh: 1.7;
+      --note-weight: 700;
+      --body-weight: 400;
+    }
+    html[data-font="hand"] {
+      --note-font: "Ma Shan Zheng", "LXGW WenKai", cursive;
+      --note-title: 26px;
+      --note-body: 20px;
+      --note-lh: 1.55;
+      --note-weight: 400;
+      --body-weight: 400;
+    }
+    html[data-font="grass"] {
+      --note-font: "Zhi Mang Xing", "Ma Shan Zheng", cursive;
+      --note-title: 28px;
+      --note-body: 22px;
+      --note-lh: 1.45;
+      --note-weight: 400;
+      --body-weight: 400;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Noto Sans SC", "PingFang SC", sans-serif;
+      color: var(--ink);
+      background:
+        repeating-linear-gradient(0deg, rgb(0 0 0 / 0.08) 0 1px, transparent 1px 40px),
+        repeating-linear-gradient(90deg, rgb(0 0 0 / 0.05) 0 1px, transparent 1px 40px),
+        radial-gradient(120% 90% at 18% 12%, #9b7a20 0%, transparent 46%),
+        radial-gradient(90% 80% at 82% 78%, #6e4e0c 0%, transparent 50%),
+        linear-gradient(135deg, #9b7a20, #8b6914 42%, #7a5c0f);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.42;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Ccircle cx='12' cy='18' r='1.1' fill='%235c3d0a' fill-opacity='.55'/%3E%3Ccircle cx='46' cy='9' r='.8' fill='%23f6e2b8' fill-opacity='.35'/%3E%3Ccircle cx='78' cy='52' r='1.3' fill='%234a3008' fill-opacity='.45'/%3E%3Ccircle cx='118' cy='24' r='.9' fill='%235c3d0a' fill-opacity='.5'/%3E%3Ccircle cx='21' cy='86' r='1' fill='%23e8c98a' fill-opacity='.28'/%3E%3Ccircle cx='97' cy='98' r='1.4' fill='%233d2706' fill-opacity='.4'/%3E%3Ccircle cx='61' cy='121' r='.7' fill='%235c3d0a' fill-opacity='.5'/%3E%3Ccircle cx='131' cy='73' r='1.1' fill='%23f0d9a4' fill-opacity='.22'/%3E%3C/svg%3E");
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 22px 22px 80px;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 14px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px 24px;
+      padding: 16px 18px 14px;
+      background: linear-gradient(180deg, #f7f0d8, #efe3c2);
+      box-shadow:
+        0 10px 24px rgb(40 22 4 / 0.28),
+        inset 0 1px 0 rgb(255 255 255 / 0.55);
+      transform: rotate(-0.4deg);
+    }
+    .toolbar::before,
+    .toolbar::after {
+      content: "";
+      position: absolute;
+      top: -11px;
+      width: 86px;
+      height: 22px;
+      background: rgb(255 252 235 / 0.38);
+      box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+    }
+    .toolbar::before { left: 48px; transform: rotate(-8deg); }
+    .toolbar::after { right: 72px; transform: rotate(6deg); }
+    .toolbar h1 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .toolbar p {
+      margin: 0;
+      max-width: 54ch;
+      color: #3d3424;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .font-switch {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .font-switch span {
+      width: 100%;
+      text-align: right;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #6a5b3f;
+    }
+    .font-switch button {
+      appearance: none;
+      border: 1px solid rgb(90 66 35 / 0.28);
+      background: #fff8e6;
+      color: #2a2114;
+      padding: 7px 11px;
+      font: 500 13px/1.2 "Noto Sans SC", sans-serif;
+      cursor: pointer;
+    }
+    .font-switch button[aria-pressed="true"] {
+      background: var(--navy);
+      color: var(--gold);
+      border-color: var(--navy);
+    }
+
+    .banner {
+      margin: 28px 8px 18px;
+      padding: 18px 22px;
+      background: var(--navy);
+      color: var(--gold);
+      box-shadow: 6px 8px 0 rgb(0 0 0 / 0.22);
+      transform: rotate(0.5deg);
+    }
+    .banner small {
+      display: block;
+      letter-spacing: 0.18em;
+      font-size: 11px;
+      color: rgb(255 255 255 / 0.55);
+    }
+    .banner strong {
+      display: block;
+      margin-top: 6px;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 0 8px 28px;
+    }
+    .stat {
+      min-width: 120px;
+      padding: 10px 14px;
+      background: rgb(26 26 46 / 0.92);
+      color: #fff;
+      box-shadow: 3px 3px 0 rgb(0 0 0 / 0.2);
+    }
+    .stat b {
+      display: block;
+      color: var(--gold);
+      font-size: 22px;
+    }
+    .stat span {
+      font-size: 12px;
+      color: rgb(255 255 255 / 0.62);
+    }
+
+    .board {
+      perspective: 1400px;
+      perspective-origin: 50% 12%;
+    }
+    .columns {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 28px 22px;
+      align-items: start;
+      transform-style: preserve-3d;
+    }
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+      transform-style: preserve-3d;
+    }
+    .column-header {
+      margin: 0 10px;
+      padding: 8px 12px;
+      background: rgb(26 26 46 / 0.9);
+      color: var(--gold);
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-align: center;
+      box-shadow: 3px 3px 0 rgb(0 0 0 / 0.22);
+    }
+
+    .note {
+      --c: #fff9a3;
+      --e: #ffef70;
+      --back: #c9a227;
+      --r: 0deg;
+      --pin: #c62828;
+      position: relative;
+      width: 100%;
+      max-width: 280px;
+      margin: 10px auto 28px;
+      color: var(--ink);
+      cursor: pointer;
+      outline: none;
+      perspective: 420px;
+      transform: rotate(var(--r)) translateZ(2px);
+      transform-style: preserve-3d;
+      transition: transform 0.45s cubic-bezier(0.3, 0.7, 0.3, 1);
+    }
+    .note.wide { max-width: 320px; }
+    .note:focus-visible {
+      outline: 3px solid #6a45f5;
+      outline-offset: 8px;
+    }
+
+    .shade {
+      position: absolute;
+      left: -14px;
+      top: 22px;
+      width: calc(100% + 28px);
+      height: calc(100% + 36px);
+      background: radial-gradient(ellipse 50% 70% at 50% 30%, rgb(45 20 2 / 0.78), rgb(45 20 2 / 0.22) 58%, transparent);
+      opacity: 0.32;
+      transform-origin: 50% 0;
+      transform: translateZ(-2px) scaleY(0.8);
+      transition: opacity 0.45s, transform 0.55s cubic-bezier(0.3, 0.7, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .pin {
+      position: absolute;
+      top: 7px;
+      left: 50%;
+      z-index: 5;
+      width: 15px;
+      height: 15px;
+      margin-left: -7.5px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 28%, #fff6, var(--pin) 52%, #4a0909);
+      box-shadow: 1px 2px 3px rgb(0 0 0 / 0.45), inset 0 1px 0 rgb(255 255 255 / 0.45);
+      transform: translateZ(10px);
+      pointer-events: none;
+    }
+    .pin::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 13px;
+      width: 3px;
+      height: 9px;
+      margin-left: -1.5px;
+      background: linear-gradient(#cfd8dc, #78909c);
+      border-radius: 1px;
+    }
+
+    .tape {
+      display: none;
+      position: absolute;
+      top: -9px;
+      left: 22%;
+      z-index: 4;
+      width: 78px;
+      height: 18px;
+      background: rgb(255 252 235 / 0.4);
+      box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+      transform: rotate(-7deg) translateZ(8px);
+      pointer-events: none;
+    }
+    .note.has-tape .tape { display: block; }
+
+    .glue,
+    .flap,
+    .mid,
+    .tip {
+      background: var(--c);
+    }
+    .glue {
+      position: relative;
+      z-index: 2;
+      min-height: 34px;
+      padding: 16px 14px 4px;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: rgb(0 0 0 / 0.55);
+      box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35);
+    }
+    .flap,
+    .mid,
+    .tip {
+      transform-style: preserve-3d;
+      transform-origin: 50% 0;
+      transform: rotateX(0deg);
+    }
+    .flap {
+      position: relative;
+      z-index: 2;
+      margin-top: -2px;
+      padding: 6px 58px 18px 16px;
+      min-height: 108px;
+      box-shadow:
+        3px 6px 10px rgb(0 0 0 / 0.18),
+        inset 0 -2px 4px rgb(0 0 0 / 0.06);
+    }
+    .note.wide .flap { min-height: 148px; }
+    .flap h3 {
+      margin: 0 0 8px;
+      font-family: var(--note-font);
+      font-size: var(--note-title);
+      font-weight: var(--note-weight);
+      line-height: 1.35;
+      word-break: keep-all;
+    }
+    .flap p {
+      margin: 0;
+      font-family: var(--note-font);
+      font-size: var(--note-body);
+      font-weight: var(--body-weight);
+      line-height: var(--note-lh);
+      color: #2c2418;
+    }
+    .meta {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 2px 8px;
+      background: rgb(0 0 0 / 0.1);
+      font-family: "Noto Sans SC", sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: #3a3328;
+    }
+    .stamp {
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      z-index: 3;
+      padding: 3px 7px;
+      border: 2px solid #1b7a46;
+      color: #1b7a46;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      transform: rotate(12deg);
+      opacity: 0.78;
+      pointer-events: none;
+    }
+    .stamp.wip {
+      border-color: #c05621;
+      color: #c05621;
+    }
+
+    .mid,
+    .tip {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      pointer-events: none;
+    }
+    .mid {
+      top: calc(100% - 5px);
+      height: 26px;
+      transition: transform 0.55s cubic-bezier(0.3, 0.7, 0.3, 1);
+    }
+    .tip {
+      top: calc(100% - 5px);
+      height: 38px;
+      background: linear-gradient(var(--c) 8%, var(--e) 46%, var(--back));
+      box-shadow: 0 10px 14px rgb(40 18 2 / 0.22);
+      transition: transform 0.55s cubic-bezier(0.3, 0.7, 0.3, 1);
+    }
+    .tip::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgb(255 255 255 / 0.42), transparent 80%);
+      opacity: 0;
+      transition: opacity 0.45s;
+    }
+
+    .note:hover,
+    .note:focus-visible,
+    .note.is-open {
+      z-index: 6;
+      transform: rotate(calc(var(--r) * 0.22)) translateZ(22px) rotateX(-10deg);
+    }
+    .note:hover .mid,
+    .note:focus-visible .mid,
+    .note.is-open .mid {
+      transform: rotateX(48deg);
+      transition: transform 0.5s cubic-bezier(0.3, 1.45, 0.5, 1);
+    }
+    .note:hover .tip,
+    .note:focus-visible .tip,
+    .note.is-open .tip {
+      transform: rotateX(56deg);
+      transition: transform 0.5s cubic-bezier(0.3, 1.45, 0.5, 1) 0.05s;
+    }
+    .note:hover .tip::after,
+    .note:focus-visible .tip::after,
+    .note.is-open .tip::after { opacity: 1; }
+    .note:hover .shade,
+    .note:focus-visible .shade,
+    .note.is-open .shade {
+      opacity: 1;
+      transform: translateZ(-2px) translateY(18px) scaleY(1.18);
+    }
+
+    .y { --c: #fff9a3; --e: #ffef70; --back: #c9a227; --pin: #c62828; }
+    .g { --c: #b8f5c8; --e: #7ee8a2; --back: #3ea86a; --pin: #2e7d32; }
+    .b { --c: #b4d4ff; --e: #7eb8f7; --back: #3f7cc4; --pin: #1565c0; }
+    .o { --c: #ffd4a3; --e: #ffbb70; --back: #d48432; --pin: #ef6c00; }
+    .p { --c: #e8b4f8; --e: #d280f0; --back: #9a48b8; --pin: #8e24aa; }
+    .r { --c: #ffb4b4; --e: #ff8080; --back: #d25555; --pin: #c62828; }
+    .teal { --c: #b4f5ef; --e: #70e8de; --back: #2ea89c; --pin: #00897b; }
+    .w { --c: #fff; --e: #f0f0f0; --back: #b9b9b9; --pin: #e0402a; }
+
+    .bottom {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 36px;
+      transform-style: preserve-3d;
+    }
+    .bottom .note { max-width: 200px; }
+    .bottom .flap { min-height: 88px; }
+
+    .hint {
+      margin: 40px 8px 0;
+      padding: 16px 18px;
+      background: rgb(246 240 226 / 0.88);
+      color: #3d3424;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .hint code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      background: rgb(110 74 36 / 0.08);
+      padding: 1px 5px;
+    }
+
+    @media (max-width: 960px) {
+      .columns { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .page { padding: 12px 12px 64px; }
+      .toolbar {
+        position: static;
+        transform: none;
+        grid-template-columns: 1fr;
+      }
+      .columns { grid-template-columns: 1fr; }
+      .font-switch { justify-content: flex-start; }
+      .font-switch span { text-align: left; }
+      .note { max-width: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .note,
+      .mid,
+      .tip,
+      .shade,
+      .tip::after { transition: none !important; }
+      .note:hover,
+      .note:focus-visible,
+      .note.is-open {
+        transform: rotate(var(--r)) translateZ(2px);
+      }
+      .note:hover .mid,
+      .note:focus-visible .mid,
+      .note.is-open .mid,
+      .note:hover .tip,
+      .note:focus-visible .tip,
+      .note.is-open .tip { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="toolbar">
+      <div>
+        <h1>便签墙示例</h1>
+        <p>
+          排版学 <a href="https://bythewei.dev/" target="_blank" rel="noreferrer">bythewei.dev</a>
+          的软木板分栏；悬停剥离学
+          <a href="https://css3dlab.edgarasneverdauskas.com/models/stickynotes/" target="_blank" rel="noreferrer">css3dlab</a>。
+          这是独立页，现有主页和文章都没改。手机点一下便签也能掀起来。
+        </p>
+      </div>
+      <div class="font-switch" role="group" aria-label="便签中文字体">
+        <span>便签上的中文</span>
+        <button type="button" data-font="sans" aria-pressed="true">黑体 · 常见</button>
+        <button type="button" data-font="kai" aria-pressed="false">文楷 · 可读手写</button>
+        <button type="button" data-font="hand" aria-pressed="false">马善政 · 手写楷</button>
+        <button type="button" data-font="grass" aria-pressed="false">芝麻星 · 更草</button>
+      </div>
+    </header>
+
+    <div class="banner">
+      <small>SANDBOX · 不会进导航</small>
+      <strong>不会就学，就这么简单。</strong>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>3</b><span>写完的</span></div>
+      <div class="stat"><b>4</b><span>还在写</span></div>
+      <div class="stat"><b>1</b><span>可以开始读的面试题</span></div>
+    </div>
+
+    <div class="board">
+      <div class="columns">
+        <section class="column">
+          <h2 class="column-header">写完的</h2>
+
+          <article class="note y wide has-tape" style="--r: -2.1deg" tabindex="0">
+            <i class="shade"></i><i class="pin"></i><i class="tape"></i>
+            <div class="glue">面试 · 可以开始读</div>
+            <div class="flap">
+              <h3>Promise 只有三种状态</h3>
+              <p>pending、fulfilled、rejected。变了，就不会再变。then 和 catch 的返回值，面试时很容易说反。</p>
+              <span class="meta">大约 6 分钟</span>
+              <span class="stamp">写完了</span>
+              <i class="mid"><i class="tip"></i></i>
+            </div>
+          </article>
+
+          <article class="note g" style="--r: 1.6deg" tabindex="0">
+            <i class="shade"></i><i class="pin"></i>
+            <div class="glue">前端</div>
+            <div class="flap">
+              <h3>let、const、var</h3>
+              <p>三种声明差在哪，作用域和提升，面试时容易混。</p>
+              <span class="meta">大约 4 分钟</span>
+              <span class="stamp">写完了</span>
+              <i class="mid"><i class="tip"></i></i>
+            </div>
+          </article>
+
+          <article class="note b" style="--r: -1.2deg" tabindex="0">
+            <i class="shade"></i><i class="pin"></i>
+            <div class="glue">前端</div>
+            <div class="flap">
+              <h3>HTML5 语义化</h3>
+              <p>标签先说出结构，再谈样式。header、article、nav 各管一段。</p>
+              <span class="meta">大约 3 分钟</span>
+              <span class="stamp">写完了</span>
+              <i class="mid"><i class="tip"></i></i>
+            </div>
+          </article>
+        </section>
+
+        <section class="column">
+          <h2 class="column-header">还在写</h2>
+
+          <article class="note o" style="--r: 2.2deg" tabindex="0">
+            <i class="shade"></i><i class="pin"></i>
+            <div class="glue">前端 · 名字先留着</div>
+            <div class="flap">
+              <h3>事件循环</h3>
+              <p>宏任务和微任务怎么排队，浏览器什么时候去渲染。</p>
+              <span class="stamp wip">还在写</span>
+              <i class="mid"><i class="tip"></i></i>
+            </div>
+          </article>
+
+          <article class="note p" style="--r: -1.8deg" tabindex="0">
+            <i class="shade"></i><i class="pin"></i>
+            <div class="glue">前端</div>
+            <div class="flap">
+              <h3>闭包</h3>
+              <p>函数把变量包在里面带走。面试常问会不会漏内存。</p>
+              <span class="stamp wip">还在写</span>
+              <i class="mid"><i class="tip"></i></i>
+            </div>
+          </article>
+
+          <article class="note teal" style="--r: 0.8deg" tabindex="0">
+            <i class="shade"></i><i class="pin"></i>
+            <div class="glue">前端</div>
+            <div class="flap">
+              <h3>this 指向谁</h3>
+              <p>谁调用它，它就指向谁。箭头函数不自己长 this。</p>
+              <span class="stamp wip">还在写</span>
+              <i class="mid"><i class="tip"></i></i>
+            </div>
+          </article>
+
+          <article class="note r" style="--r: -2.4deg" tabindex="0">
+            <i class="shade"></i><i class="pin"></i>
+            <div class="glue">前端</div>
+            <div class="flap">
+              <h3>原型链</h3>
+              <p>找不到的属性，就顺着 __proto__ 往上问。</p>
+              <span class="stamp wip">还在写</span>
+              <i class="mid"><i class="tip"></i></i>
+            </div>
+          </article>
+        </section>
+
+        <section class="column">
+          <h2 class="column-header">DevOps · 备忘</h2>
+
+          <article class="note o has-tape" style="--r: 1.4deg" tabindex="0">
+            <i class="shade"></i><i class="pin"></i><i class="tape"></i>
+            <div class="glue">Docker</div>
+            <div class="flap">
+              <h3>Docker 初印象</h3>
+              <p>先建立容器是什么，再碰命令。镜像、容器、仓库先分清。</p>
+              <span class="meta">大约 5 分钟</span>
+              <span class="stamp">写完了</span>
+              <i class="mid"><i class="tip"></i></i>
+            </div>
+          </article>
+
+          <article class="note w" style="--r: -0.9deg" tabindex="0">
+            <i class="shade"></i><i class="pin"></i>
+            <div class="glue">看字体时读这句</div>
+            <div class="flap">
+              <h3>闭包、this、原型链</h3>
+              <p>微任务插队，宏任务排队。async / await 只是 Promise 的糖。</p>
+              <i class="mid"><i class="tip"></i></i>
+            </div>
+          </article>
+
+          <article class="note b" style="--r: 2.0deg" tabindex="0">
+            <i class="shade"></i><i class="pin"></i>
+            <div class="glue">这面墙在试什么</div>
+            <div class="flap">
+              <h3>歪一点，钉住，再掀开</h3>
+              <p>分栏和胶带学软木板；下沿卷起来学剥离。字体只作用在便签正文。</p>
+              <i class="mid"><i class="tip"></i></i>
+            </div>
+          </article>
+        </section>
+      </div>
+
+      <div class="bottom">
+        <article class="note y" style="--r: -1.5deg" tabindex="0">
+          <i class="shade"></i><i class="pin"></i>
+          <div class="glue">入口</div>
+          <div class="flap">
+            <h3>面试题</h3>
+            <p>从 Promise 那篇开始读。</p>
+            <i class="mid"><i class="tip"></i></i>
+          </div>
+        </article>
+        <article class="note g" style="--r: 1.1deg" tabindex="0">
+          <i class="shade"></i><i class="pin"></i>
+          <div class="glue">入口</div>
+          <div class="flap">
+            <h3>前端笔记</h3>
+            <p>HTML 和 JavaScript 的底。</p>
+            <i class="mid"><i class="tip"></i></i>
+          </div>
+        </article>
+        <article class="note teal" style="--r: -2.0deg" tabindex="0">
+          <i class="shade"></i><i class="pin"></i>
+          <div class="glue">入口</div>
+          <div class="flap">
+            <h3>Docker</h3>
+            <p>容器是什么，先有印象。</p>
+            <i class="mid"><i class="tip"></i></i>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <aside class="hint">
+      字体我自己的判断：正文更适合<strong>文楷</strong>或<strong>黑体</strong>。马善政在标题上好看，14px 摘要会发糊；芝麻星更像签名，不适合一段中文。结构标签（「写完的」「大约 6 分钟」）一直用黑体，避免整面墙都在抖。
+      文件在 <code>public/demos/sticky-wall.html</code>，改完刷新即可。
+    </aside>
+  </div>
+
+  <script>
+    const root = document.documentElement;
+    const buttons = [...document.querySelectorAll(".font-switch button")];
+
+    function setFont(name) {
+      root.dataset.font = name;
+      buttons.forEach((btn) => {
+        btn.setAttribute("aria-pressed", String(btn.dataset.font === name));
+      });
+      try { localStorage.setItem("sticky-wall-font", name); } catch {}
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => setFont(btn.dataset.font));
+    });
+
+    try {
+      const saved = localStorage.getItem("sticky-wall-font");
+      if (saved && buttons.some((btn) => btn.dataset.font === saved)) setFont(saved);
+      else setFont("sans");
+    } catch {
+      setFont("sans");
+    }
+
+    const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (!canHover) {
+      document.querySelectorAll(".note").forEach((note) => {
+        note.addEventListener("click", () => {
+          document.querySelectorAll(".note.is-open").forEach((open) => {
+            if (open !== note) open.classList.remove("is-open");
+          });
+          note.classList.toggle("is-open");
+        });
+      });
+    }
+  </script>
+</body>
+</html>
