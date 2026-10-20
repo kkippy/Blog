@@ -207,8 +207,8 @@
     }
     .columns {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 28px 22px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px 36px;
       align-items: start;
       transform-style: preserve-3d;
     }
@@ -229,25 +229,34 @@
       box-shadow: 3px 3px 0 rgb(0 0 0 / 0.22);
     }
 
+    a.note {
+      text-decoration: none;
+      color: inherit;
+    }
     .note {
       --c: #fff9a3;
       --e: #ffef70;
       --back: #c9a227;
       --r: 0deg;
       --pin: #c62828;
+      --curl: 84px;
+      display: block;
       position: relative;
       width: 100%;
-      max-width: 280px;
+      max-width: 300px;
       margin: 10px auto 28px;
       color: var(--ink);
       cursor: pointer;
       outline: none;
-      perspective: 420px;
+      overflow: visible;
+      perspective: 560px;
       transform: rotate(var(--r)) translateZ(2px);
       transform-style: preserve-3d;
       transition: transform 0.45s cubic-bezier(0.3, 0.7, 0.3, 1);
     }
-    .note.wide { max-width: 320px; }
+    .note--draft {
+      cursor: default;
+    }
     .note:focus-visible {
       outline: 3px solid #6a45f5;
       outline-offset: 8px;
@@ -308,41 +317,26 @@
     }
     .note.has-tape .tape { display: block; }
 
-    .glue,
-    .flap,
-    .mid,
-    .tip {
+    .paper {
+      position: relative;
+      z-index: 2;
+      min-height: 148px;
+      padding: 18px 18px 22px;
       background: var(--c);
-    }
-    .glue {
-      position: relative;
-      z-index: 2;
-      min-height: 34px;
-      padding: 16px 14px 4px;
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      color: rgb(0 0 0 / 0.55);
-      box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35);
-    }
-    .flap,
-    .mid,
-    .tip {
-      transform-style: preserve-3d;
-      transform-origin: 50% 0;
-      transform: rotateX(0deg);
-    }
-    .flap {
-      position: relative;
-      z-index: 2;
-      margin-top: -2px;
-      padding: 6px 58px 18px 16px;
-      min-height: 108px;
       box-shadow:
         3px 6px 10px rgb(0 0 0 / 0.18),
         inset 0 -2px 4px rgb(0 0 0 / 0.06);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      transition: clip-path 0.5s cubic-bezier(0.3, 0.7, 0.3, 1);
     }
-    .note.wide .flap { min-height: 148px; }
-    .flap h3 {
+    .kicker {
+      margin: 0 0 8px;
+      font-family: "Noto Sans SC", sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: rgb(0 0 0 / 0.55);
+    }
+    .paper h3 {
       margin: 0 0 8px;
       font-family: var(--note-font);
       font-size: var(--note-title);
@@ -350,7 +344,7 @@
       line-height: 1.35;
       word-break: keep-all;
     }
-    .flap p {
+    .paper p {
       margin: 0;
       font-family: var(--note-font);
       font-size: var(--note-body);
@@ -358,89 +352,108 @@
       line-height: var(--note-lh);
       color: #2c2418;
     }
-    .meta {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 2px 8px;
-      background: rgb(0 0 0 / 0.1);
-      font-family: "Noto Sans SC", sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.04em;
-      color: #3a3328;
-    }
-    .stamp {
-      position: absolute;
-      right: 10px;
-      top: 8px;
-      z-index: 3;
-      padding: 3px 7px;
-      border: 2px solid #1b7a46;
-      color: #1b7a46;
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      transform: rotate(12deg);
-      opacity: 0.78;
-      pointer-events: none;
-    }
-    .stamp.wip {
-      border-color: #c05621;
-      color: #c05621;
-    }
 
-    .mid,
-    .tip {
+    /* 右下角三角：沿对角线掀开，像从角落撕便签 */
+    .curl {
       position: absolute;
-      left: 0;
-      width: 100%;
+      right: 0;
+      bottom: 0;
+      z-index: 4;
+      width: 18px;
+      height: 18px;
       pointer-events: none;
+      transform-style: preserve-3d;
+      perspective: 240px;
+      transition: width 0.5s cubic-bezier(0.3, 0.7, 0.3, 1), height 0.5s cubic-bezier(0.3, 0.7, 0.3, 1);
     }
-    .mid {
-      top: calc(100% - 5px);
-      height: 26px;
+    .note:hover .curl,
+    .note:focus-visible .curl,
+    .note.is-open .curl {
+      width: var(--curl);
+      height: var(--curl);
+    }
+    .curl__sheet,
+    .curl__tip {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      transform-origin: 0 100%;
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
+      backface-visibility: hidden;
+    }
+    .curl__sheet {
+      background: linear-gradient(135deg, var(--c) 18%, var(--e) 58%, var(--back));
+      box-shadow: -6px 8px 14px rgb(40 18 2 / 0.18);
       transition: transform 0.55s cubic-bezier(0.3, 0.7, 0.3, 1);
     }
-    .tip {
-      top: calc(100% - 5px);
-      height: 38px;
-      background: linear-gradient(var(--c) 8%, var(--e) 46%, var(--back));
-      box-shadow: 0 10px 14px rgb(40 18 2 / 0.22);
+    .curl__tip {
+      top: 38%;
+      left: 38%;
+      background: linear-gradient(135deg, var(--e), var(--back));
       transition: transform 0.55s cubic-bezier(0.3, 0.7, 0.3, 1);
     }
-    .tip::after {
+    .curl__tip::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(rgb(255 255 255 / 0.42), transparent 80%);
-      opacity: 0;
-      transition: opacity 0.45s;
+      background: linear-gradient(315deg, rgb(255 255 255 / 0.45), transparent 62%);
+      opacity: 0.2;
+      transition: opacity 0.4s;
+    }
+    .curl__under {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 0;
+      height: 0;
+      border-bottom: 10px solid rgb(40 22 4 / 0.18);
+      border-left: 10px solid transparent;
+      transition: width 0.5s, height 0.5s, border-width 0.5s;
     }
 
     .note:hover,
     .note:focus-visible,
     .note.is-open {
       z-index: 6;
-      transform: rotate(calc(var(--r) * 0.22)) translateZ(22px) rotateX(-10deg);
+      transform: rotate(calc(var(--r) * 0.35)) translateZ(12px);
     }
-    .note:hover .mid,
-    .note:focus-visible .mid,
-    .note.is-open .mid {
-      transform: rotateX(48deg);
-      transition: transform 0.5s cubic-bezier(0.3, 1.45, 0.5, 1);
+    .note:hover .paper,
+    .note:focus-visible .paper,
+    .note.is-open .paper {
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - var(--curl)),
+        calc(100% - var(--curl)) 100%,
+        0 100%
+      );
     }
-    .note:hover .tip,
-    .note:focus-visible .tip,
-    .note.is-open .tip {
-      transform: rotateX(56deg);
-      transition: transform 0.5s cubic-bezier(0.3, 1.45, 0.5, 1) 0.05s;
+    .note:hover .curl__sheet,
+    .note:focus-visible .curl__sheet,
+    .note.is-open .curl__sheet {
+      transform: rotate3d(1, -1, 0, 78deg);
     }
-    .note:hover .tip::after,
-    .note:focus-visible .tip::after,
-    .note.is-open .tip::after { opacity: 1; }
+    .note:hover .curl__tip,
+    .note:focus-visible .curl__tip,
+    .note.is-open .curl__tip {
+      transform: rotate3d(1, -1, 0, 50deg);
+      transition-delay: 0.04s;
+    }
+    .note:hover .curl__tip::after,
+    .note:focus-visible .curl__tip::after,
+    .note.is-open .curl__tip::after { opacity: 1; }
+    .note:hover .curl__under,
+    .note:focus-visible .curl__under,
+    .note.is-open .curl__under {
+      border-bottom-width: var(--curl);
+      border-left-width: var(--curl);
+      border-bottom-color: rgb(40 22 4 / 0.28);
+    }
     .note:hover .shade,
     .note:focus-visible .shade,
     .note.is-open .shade {
-      opacity: 1;
-      transform: translateZ(-2px) translateY(18px) scaleY(1.18);
+      opacity: 0.85;
+      transform: translateZ(-2px) translate(8px, 10px) scale(1.04);
     }
 
     .y { --c: #fff9a3; --e: #ffef70; --back: #c9a227; --pin: #c62828; }
@@ -451,17 +464,6 @@
     .r { --c: #ffb4b4; --e: #ff8080; --back: #d25555; --pin: #c62828; }
     .teal { --c: #b4f5ef; --e: #70e8de; --back: #2ea89c; --pin: #00897b; }
     .w { --c: #fff; --e: #f0f0f0; --back: #b9b9b9; --pin: #e0402a; }
-
-    .bottom {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 18px;
-      margin-top: 36px;
-      transform-style: preserve-3d;
-    }
-    .bottom .note { max-width: 200px; }
-    .bottom .flap { min-height: 88px; }
 
     .hint {
       margin: 40px 8px 0;
@@ -479,7 +481,7 @@
     }
 
     @media (max-width: 960px) {
-      .columns { grid-template-columns: 1fr 1fr; }
+      .columns { grid-template-columns: 1fr; }
     }
     @media (max-width: 640px) {
       .page { padding: 12px 12px 64px; }
@@ -495,21 +497,22 @@
     }
     @media (prefers-reduced-motion: reduce) {
       .note,
-      .mid,
-      .tip,
-      .shade,
-      .tip::after { transition: none !important; }
+      .paper,
+      .curl__sheet,
+      .curl__tip,
+      .curl__under,
+      .shade { transition: none !important; }
       .note:hover,
       .note:focus-visible,
       .note.is-open {
         transform: rotate(var(--r)) translateZ(2px);
       }
-      .note:hover .mid,
-      .note:focus-visible .mid,
-      .note.is-open .mid,
-      .note:hover .tip,
-      .note:focus-visible .tip,
-      .note.is-open .tip { transform: none; }
+      .note:hover .curl__sheet,
+      .note:focus-visible .curl__sheet,
+      .note.is-open .curl__sheet,
+      .note:hover .curl__tip,
+      .note:focus-visible .curl__tip,
+      .note.is-open .curl__tip { transform: none; }
     }
   </style>
 </head>
@@ -522,7 +525,7 @@
           排版学 <a href="https://bythewei.dev/" target="_blank" rel="noreferrer">bythewei.dev</a>
           的软木板分栏；悬停剥离学
           <a href="https://css3dlab.edgarasneverdauskas.com/models/stickynotes/" target="_blank" rel="noreferrer">css3dlab</a>。
-          这是独立页，现有主页和文章都没改。手机点一下便签也能掀起来。
+          这是独立页，现有主页没改。写完的便签只放简介，点进去还是原来的文章。悬停时从右下角斜着撕开。
         </p>
       </div>
       <div class="font-switch" role="group" aria-label="便签中文字体">
@@ -540,172 +543,113 @@
     </div>
 
     <div class="stats">
-      <div class="stat"><b>3</b><span>写完的</span></div>
-      <div class="stat"><b>4</b><span>还在写</span></div>
-      <div class="stat"><b>1</b><span>可以开始读的面试题</span></div>
+      <div class="stat"><b>4</b><span>写完的 · 可以点</span></div>
+      <div class="stat"><b>4</b><span>还在写 · 只看简介</span></div>
     </div>
 
     <div class="board">
       <div class="columns">
         <section class="column">
-          <h2 class="column-header">写完的</h2>
+          <h2 class="column-header">写完的 · 点进去读</h2>
 
-          <article class="note y wide has-tape" style="--r: -2.1deg" tabindex="0">
+          <a class="note y has-tape" style="--r: -2.1deg" href="/exam/interview/Promise面试题">
             <i class="shade"></i><i class="pin"></i><i class="tape"></i>
-            <div class="glue">面试 · 可以开始读</div>
-            <div class="flap">
-              <h3>Promise 只有三种状态</h3>
-              <p>pending、fulfilled、rejected。变了，就不会再变。then 和 catch 的返回值，面试时很容易说反。</p>
-              <span class="meta">大约 6 分钟</span>
-              <span class="stamp">写完了</span>
-              <i class="mid"><i class="tip"></i></i>
+            <div class="paper">
+              <p class="kicker">面试题</p>
+              <h3>Promise 面试题</h3>
+              <p>按面试复习整理：三种状态、链式调用、静态方法，还有 async / await 里容易说反的地方。</p>
             </div>
-          </article>
+            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <i class="curl__under"></i>
+          </a>
 
-          <article class="note g" style="--r: 1.6deg" tabindex="0">
+          <a class="note g" style="--r: 1.6deg" href="/frontEnd/js/let、const、var三剑客">
             <i class="shade"></i><i class="pin"></i>
-            <div class="glue">前端</div>
-            <div class="flap">
+            <div class="paper">
+              <p class="kicker">前端</p>
               <h3>let、const、var</h3>
-              <p>三种声明差在哪，作用域和提升，面试时容易混。</p>
-              <span class="meta">大约 4 分钟</span>
-              <span class="stamp">写完了</span>
-              <i class="mid"><i class="tip"></i></i>
+              <p>三种声明差在作用域、提升和能不能重复声明。var 能跨块，let / const 不能。</p>
             </div>
-          </article>
+            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <i class="curl__under"></i>
+          </a>
 
-          <article class="note b" style="--r: -1.2deg" tabindex="0">
+          <a class="note b" style="--r: -1.2deg" href="/frontEnd/html/基础知识">
             <i class="shade"></i><i class="pin"></i>
-            <div class="glue">前端</div>
-            <div class="flap">
+            <div class="paper">
+              <p class="kicker">前端</p>
               <h3>HTML5 语义化</h3>
-              <p>标签先说出结构，再谈样式。header、article、nav 各管一段。</p>
-              <span class="meta">大约 3 分钟</span>
-              <span class="stamp">写完了</span>
-              <i class="mid"><i class="tip"></i></i>
+              <p>用合理的标签说出结构。样式丢了也看得懂，也更利于搜索引擎和读屏。</p>
             </div>
-          </article>
+            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <i class="curl__under"></i>
+          </a>
+
+          <a class="note o has-tape" style="--r: 1.4deg" href="/DevOps/docker/Docker初印象">
+            <i class="shade"></i><i class="pin"></i><i class="tape"></i>
+            <div class="paper">
+              <p class="kicker">Docker</p>
+              <h3>Docker 初印象</h3>
+              <p>容器把环境和配置打包带走。体积比虚拟机小，启动也更快，先建立这个印象。</p>
+            </div>
+            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <i class="curl__under"></i>
+          </a>
         </section>
 
         <section class="column">
-          <h2 class="column-header">还在写</h2>
+          <h2 class="column-header">还在写 · 还不能点</h2>
 
-          <article class="note o" style="--r: 2.2deg" tabindex="0">
+          <article class="note o note--draft" style="--r: 2.2deg">
             <i class="shade"></i><i class="pin"></i>
-            <div class="glue">前端 · 名字先留着</div>
-            <div class="flap">
+            <div class="paper">
+              <p class="kicker">前端</p>
               <h3>事件循环</h3>
               <p>宏任务和微任务怎么排队，浏览器什么时候去渲染。</p>
-              <span class="stamp wip">还在写</span>
-              <i class="mid"><i class="tip"></i></i>
             </div>
+            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <i class="curl__under"></i>
           </article>
 
-          <article class="note p" style="--r: -1.8deg" tabindex="0">
+          <article class="note p note--draft" style="--r: -1.8deg">
             <i class="shade"></i><i class="pin"></i>
-            <div class="glue">前端</div>
-            <div class="flap">
+            <div class="paper">
+              <p class="kicker">前端</p>
               <h3>闭包</h3>
-              <p>函数把变量包在里面带走。面试常问会不会漏内存。</p>
-              <span class="stamp wip">还在写</span>
-              <i class="mid"><i class="tip"></i></i>
+              <p>函数把外层变量包在里面带走。面试常问它会不会把内存漏掉。</p>
             </div>
+            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <i class="curl__under"></i>
           </article>
 
-          <article class="note teal" style="--r: 0.8deg" tabindex="0">
+          <article class="note teal note--draft" style="--r: 0.8deg">
             <i class="shade"></i><i class="pin"></i>
-            <div class="glue">前端</div>
-            <div class="flap">
-              <h3>this 指向谁</h3>
-              <p>谁调用它，它就指向谁。箭头函数不自己长 this。</p>
-              <span class="stamp wip">还在写</span>
-              <i class="mid"><i class="tip"></i></i>
+            <div class="paper">
+              <p class="kicker">前端</p>
+              <h3>this</h3>
+              <p>谁调用它，它就指向谁。箭头函数不自己长 this，沿外层找。</p>
             </div>
+            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <i class="curl__under"></i>
           </article>
 
-          <article class="note r" style="--r: -2.4deg" tabindex="0">
+          <article class="note r note--draft" style="--r: -2.4deg">
             <i class="shade"></i><i class="pin"></i>
-            <div class="glue">前端</div>
-            <div class="flap">
+            <div class="paper">
+              <p class="kicker">前端</p>
               <h3>原型链</h3>
-              <p>找不到的属性，就顺着 __proto__ 往上问。</p>
-              <span class="stamp wip">还在写</span>
-              <i class="mid"><i class="tip"></i></i>
+              <p>自己身上找不到的属性，就顺着原型往上问，一直问到 null。</p>
             </div>
+            <span class="curl" aria-hidden="true"><i class="curl__sheet"><i class="curl__tip"></i></i></span>
+            <i class="curl__under"></i>
           </article>
         </section>
-
-        <section class="column">
-          <h2 class="column-header">DevOps · 备忘</h2>
-
-          <article class="note o has-tape" style="--r: 1.4deg" tabindex="0">
-            <i class="shade"></i><i class="pin"></i><i class="tape"></i>
-            <div class="glue">Docker</div>
-            <div class="flap">
-              <h3>Docker 初印象</h3>
-              <p>先建立容器是什么，再碰命令。镜像、容器、仓库先分清。</p>
-              <span class="meta">大约 5 分钟</span>
-              <span class="stamp">写完了</span>
-              <i class="mid"><i class="tip"></i></i>
-            </div>
-          </article>
-
-          <article class="note w" style="--r: -0.9deg" tabindex="0">
-            <i class="shade"></i><i class="pin"></i>
-            <div class="glue">看字体时读这句</div>
-            <div class="flap">
-              <h3>闭包、this、原型链</h3>
-              <p>微任务插队，宏任务排队。async / await 只是 Promise 的糖。</p>
-              <i class="mid"><i class="tip"></i></i>
-            </div>
-          </article>
-
-          <article class="note b" style="--r: 2.0deg" tabindex="0">
-            <i class="shade"></i><i class="pin"></i>
-            <div class="glue">这面墙在试什么</div>
-            <div class="flap">
-              <h3>歪一点，钉住，再掀开</h3>
-              <p>分栏和胶带学软木板；下沿卷起来学剥离。字体只作用在便签正文。</p>
-              <i class="mid"><i class="tip"></i></i>
-            </div>
-          </article>
-        </section>
-      </div>
-
-      <div class="bottom">
-        <article class="note y" style="--r: -1.5deg" tabindex="0">
-          <i class="shade"></i><i class="pin"></i>
-          <div class="glue">入口</div>
-          <div class="flap">
-            <h3>面试题</h3>
-            <p>从 Promise 那篇开始读。</p>
-            <i class="mid"><i class="tip"></i></i>
-          </div>
-        </article>
-        <article class="note g" style="--r: 1.1deg" tabindex="0">
-          <i class="shade"></i><i class="pin"></i>
-          <div class="glue">入口</div>
-          <div class="flap">
-            <h3>前端笔记</h3>
-            <p>HTML 和 JavaScript 的底。</p>
-            <i class="mid"><i class="tip"></i></i>
-          </div>
-        </article>
-        <article class="note teal" style="--r: -2.0deg" tabindex="0">
-          <i class="shade"></i><i class="pin"></i>
-          <div class="glue">入口</div>
-          <div class="flap">
-            <h3>Docker</h3>
-            <p>容器是什么，先有印象。</p>
-            <i class="mid"><i class="tip"></i></i>
-          </div>
-        </article>
       </div>
     </div>
 
     <aside class="hint">
-      字体我自己的判断：正文更适合<strong>文楷</strong>或<strong>黑体</strong>。马善政在标题上好看，14px 摘要会发糊；芝麻星更像签名，不适合一段中文。结构标签（「写完的」「大约 6 分钟」）一直用黑体，避免整面墙都在抖。
-      文件在 <code>public/demos/sticky-wall.html</code>，改完刷新即可。
+      写完的便签点进去会打开原来的文章页。还在写的只留简介，没有链接。卷边是右下角沿对角线撕开，不再朝正前方翻。
+      文件在 <code>public/demos/sticky-wall.html</code>。
     </aside>
   </div>
 
@@ -735,7 +679,7 @@
 
     const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     if (!canHover) {
-      document.querySelectorAll(".note").forEach((note) => {
+      document.querySelectorAll(".note--draft").forEach((note) => {
         note.addEventListener("click", () => {
           document.querySelectorAll(".note.is-open").forEach((open) => {
             if (open !== note) open.classList.remove("is-open");
