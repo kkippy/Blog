@@ -3,21 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>便签墙示例 · 不改现有页面</title>
+  <title>便签墙示例 · Peel.js</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Zhi+Mang+Xing&display=swap" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" />
+  <link rel="stylesheet" href="./lib/peel.css" />
   <style>
-    @property --cut {
-      syntax: "<length>";
-      inherits: true;
-      initial-value: 0px;
-    }
     :root {
-      --cork: #8b6914;
-      --cork-dark: #7a5c0f;
-      --cork-light: #9b7a20;
       --navy: #1a1a2e;
       --gold: #f0b847;
       --ink: #1a1a1a;
@@ -28,38 +21,33 @@
       --note-weight: 700;
       --body-weight: 400;
     }
-
     html[data-font="sans"] {
-      --note-font: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+      --note-font: "Noto Sans SC", "PingFang SC", sans-serif;
       --note-title: 19px;
       --note-body: 13.5px;
       --note-lh: 1.55;
       --note-weight: 700;
-      --body-weight: 400;
     }
     html[data-font="kai"] {
-      --note-font: "LXGW WenKai", "LXGW WenKai Screen", "Noto Serif SC", serif;
+      --note-font: "LXGW WenKai", "LXGW WenKai Screen", serif;
       --note-title: 21px;
       --note-body: 15px;
       --note-lh: 1.7;
       --note-weight: 700;
-      --body-weight: 400;
     }
     html[data-font="hand"] {
-      --note-font: "Ma Shan Zheng", "LXGW WenKai", cursive;
+      --note-font: "Ma Shan Zheng", cursive;
       --note-title: 26px;
       --note-body: 20px;
       --note-lh: 1.55;
       --note-weight: 400;
-      --body-weight: 400;
     }
     html[data-font="grass"] {
-      --note-font: "Zhi Mang Xing", "Ma Shan Zheng", cursive;
+      --note-font: "Zhi Mang Xing", cursive;
       --note-title: 28px;
       --note-body: 22px;
       --note-lh: 1.45;
       --note-weight: 400;
-      --body-weight: 400;
     }
 
     * { box-sizing: border-box; }
@@ -79,19 +67,17 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      z-index: 0;
       opacity: 0.42;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Ccircle cx='12' cy='18' r='1.1' fill='%235c3d0a' fill-opacity='.55'/%3E%3Ccircle cx='46' cy='9' r='.8' fill='%23f6e2b8' fill-opacity='.35'/%3E%3Ccircle cx='78' cy='52' r='1.3' fill='%234a3008' fill-opacity='.45'/%3E%3Ccircle cx='118' cy='24' r='.9' fill='%235c3d0a' fill-opacity='.5'/%3E%3Ccircle cx='21' cy='86' r='1' fill='%23e8c98a' fill-opacity='.28'/%3E%3Ccircle cx='97' cy='98' r='1.4' fill='%233d2706' fill-opacity='.4'/%3E%3Ccircle cx='61' cy='121' r='.7' fill='%235c3d0a' fill-opacity='.5'/%3E%3Ccircle cx='131' cy='73' r='1.1' fill='%23f0d9a4' fill-opacity='.22'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Ccircle cx='12' cy='18' r='1.1' fill='%235c3d0a' fill-opacity='.55'/%3E%3Ccircle cx='46' cy='9' r='.8' fill='%23f6e2b8' fill-opacity='.35'/%3E%3Ccircle cx='78' cy='52' r='1.3' fill='%234a3008' fill-opacity='.45'/%3E%3Ccircle cx='118' cy='24' r='.9' fill='%235c3d0a' fill-opacity='.5'/%3E%3Ccircle cx='21' cy='86' r='1' fill='%23e8c98a' fill-opacity='.28'/%3E%3Ccircle cx='97' cy='98' r='1.4' fill='%233d2706' fill-opacity='.4'/%3E%3C/svg%3E");
     }
 
     .page {
       position: relative;
       z-index: 1;
-      max-width: 1240px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 22px 22px 80px;
     }
-
     .toolbar {
       position: sticky;
       top: 14px;
@@ -101,51 +87,12 @@
       gap: 16px 24px;
       padding: 16px 18px 14px;
       background: linear-gradient(180deg, #f7f0d8, #efe3c2);
-      box-shadow:
-        0 10px 24px rgb(40 22 4 / 0.28),
-        inset 0 1px 0 rgb(255 255 255 / 0.55);
-      transform: rotate(-0.4deg);
+      box-shadow: 0 10px 24px rgb(40 22 4 / 0.28), inset 0 1px 0 rgb(255 255 255 / 0.55);
     }
-    .toolbar::before,
-    .toolbar::after {
-      content: "";
-      position: absolute;
-      top: -11px;
-      width: 86px;
-      height: 22px;
-      background: rgb(255 252 235 / 0.38);
-      box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
-    }
-    .toolbar::before { left: 48px; transform: rotate(-8deg); }
-    .toolbar::after { right: 72px; transform: rotate(6deg); }
-    .toolbar h1 {
-      margin: 0 0 6px;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-    }
-    .toolbar p {
-      margin: 0;
-      max-width: 54ch;
-      color: #3d3424;
-      font-size: 13px;
-      line-height: 1.7;
-    }
-    .font-switch {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      justify-content: flex-end;
-      gap: 8px;
-    }
-    .font-switch span {
-      width: 100%;
-      text-align: right;
-      font-size: 11px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #6a5b3f;
-    }
+    .toolbar h1 { margin: 0 0 6px; font-size: 22px; }
+    .toolbar p { margin: 0; max-width: 58ch; color: #3d3424; font-size: 13px; line-height: 1.7; }
+    .font-switch { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+    .font-switch span { width: 100%; text-align: right; font-size: 11px; letter-spacing: 0.16em; color: #6a5b3f; }
     .font-switch button {
       appearance: none;
       border: 1px solid rgb(90 66 35 / 0.28);
@@ -167,62 +114,21 @@
       background: var(--navy);
       color: var(--gold);
       box-shadow: 6px 8px 0 rgb(0 0 0 / 0.22);
-      transform: rotate(0.5deg);
     }
-    .banner small {
-      display: block;
-      letter-spacing: 0.18em;
-      font-size: 11px;
-      color: rgb(255 255 255 / 0.55);
-    }
-    .banner strong {
-      display: block;
-      margin-top: 6px;
-      font-size: clamp(28px, 4vw, 42px);
-      font-weight: 700;
-      letter-spacing: 0.04em;
-    }
+    .banner small { display: block; letter-spacing: 0.18em; font-size: 11px; color: rgb(255 255 255 / 0.55); }
+    .banner strong { display: block; margin-top: 6px; font-size: clamp(28px, 4vw, 42px); }
 
-    .stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin: 0 8px 28px;
-    }
-    .stat {
-      min-width: 120px;
-      padding: 10px 14px;
-      background: rgb(26 26 46 / 0.92);
-      color: #fff;
-      box-shadow: 3px 3px 0 rgb(0 0 0 / 0.2);
-    }
-    .stat b {
-      display: block;
-      color: var(--gold);
-      font-size: 22px;
-    }
-    .stat span {
-      font-size: 12px;
-      color: rgb(255 255 255 / 0.62);
-    }
+    .stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 8px 28px; }
+    .stat { min-width: 120px; padding: 10px 14px; background: rgb(26 26 46 / 0.92); color: #fff; }
+    .stat b { display: block; color: var(--gold); font-size: 22px; }
+    .stat span { font-size: 12px; color: rgb(255 255 255 / 0.62); }
 
-    .board {
-      perspective: 1400px;
-      perspective-origin: 50% 12%;
-    }
     .columns {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 28px 36px;
-      align-items: start;
-      transform-style: preserve-3d;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px 40px;
     }
-    .column {
-      display: flex;
-      flex-direction: column;
-      gap: 36px;
-      transform-style: preserve-3d;
-    }
+    .column { display: flex; flex-direction: column; gap: 28px; }
     .column-header {
       margin: 0 10px;
       padding: 8px 12px;
@@ -231,69 +137,78 @@
       font-size: 13px;
       letter-spacing: 0.18em;
       text-align: center;
-      box-shadow: 3px 3px 0 rgb(0 0 0 / 0.22);
     }
 
-    a.note {
-      text-decoration: none;
-      color: inherit;
-    }
+    a.note { text-decoration: none; color: inherit; }
     .note {
       --c: #fff9a3;
-      --e: #ffef70;
-      --back: #c9a227;
+      --back: #d4b84a;
       --r: 0deg;
       --pin: #c62828;
-      --curl: 56px;
-      --cut: 0px;
       display: block;
       position: relative;
+      z-index: 1;
       width: 100%;
-      max-width: 300px;
-      margin: 10px auto 28px;
-      color: var(--ink);
-      cursor: pointer;
-      outline: none;
+      max-width: 280px;
+      height: 176px;
+      margin: 16px auto;
       overflow: visible;
-      perspective: 560px;
-      transform: rotate(var(--r)) translateZ(2px);
-      transform-style: preserve-3d;
-      transition: transform 0.45s cubic-bezier(0.3, 0.7, 0.3, 1);
+      color: var(--ink);
+      transform: rotate(var(--r));
+      filter: drop-shadow(3px 8px 10px rgb(40 18 2 / 0.28));
     }
-    .note--draft {
-      cursor: default;
-    }
-    .note:focus-visible {
-      outline: 3px solid #6a45f5;
-      outline-offset: 8px;
-    }
+    .note:hover,
+    .note:focus-visible { z-index: 6; }
+    .note--draft { cursor: default; }
+    .note.peel { opacity: 0; }
+    .note.peel-ready { opacity: 1; }
+    .column, .columns { overflow: visible; }
 
-    .shade {
-      position: absolute;
-      left: -14px;
-      top: 22px;
-      width: calc(100% + 28px);
-      height: calc(100% + 36px);
-      background: radial-gradient(ellipse 50% 70% at 50% 30%, rgb(45 20 2 / 0.78), rgb(45 20 2 / 0.22) 58%, transparent);
-      opacity: 0.32;
-      transform-origin: 50% 0;
-      transform: translateZ(-2px) scaleY(0.8);
-      transition: opacity 0.45s, transform 0.55s cubic-bezier(0.3, 0.7, 0.3, 1);
-      pointer-events: none;
+    .peel-top,
+    .peel-back,
+    .peel-bottom { background: var(--c); }
+    .peel-back { background: var(--back); }
+    .peel-bottom { background: transparent; }
+
+    .face {
+      height: 100%;
+      padding: 18px 18px 20px;
+    }
+    .kicker {
+      margin: 0 0 8px;
+      font-family: "Noto Sans SC", sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: rgb(0 0 0 / 0.55);
+    }
+    .face h3 {
+      margin: 0 0 8px;
+      font-family: var(--note-font);
+      font-size: var(--note-title);
+      font-weight: var(--note-weight);
+      line-height: 1.35;
+      word-break: keep-all;
+    }
+    .face p {
+      margin: 0;
+      font-family: var(--note-font);
+      font-size: var(--note-body);
+      font-weight: var(--body-weight);
+      line-height: var(--note-lh);
+      color: #2c2418;
     }
 
     .pin {
       position: absolute;
       top: 7px;
       left: 50%;
-      z-index: 5;
+      z-index: 8;
       width: 15px;
       height: 15px;
       margin-left: -7.5px;
       border-radius: 50%;
       background: radial-gradient(circle at 32% 28%, #fff6, var(--pin) 52%, #4a0909);
       box-shadow: 1px 2px 3px rgb(0 0 0 / 0.45), inset 0 1px 0 rgb(255 255 255 / 0.45);
-      transform: translateZ(10px);
       pointer-events: none;
     }
     .pin::after {
@@ -305,194 +220,15 @@
       height: 9px;
       margin-left: -1.5px;
       background: linear-gradient(#cfd8dc, #78909c);
-      border-radius: 1px;
     }
 
-    .tape {
-      display: none;
-      position: absolute;
-      top: -9px;
-      left: 22%;
-      z-index: 4;
-      width: 78px;
-      height: 18px;
-      background: rgb(255 252 235 / 0.4);
-      box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
-      transform: rotate(-7deg) translateZ(8px);
-      pointer-events: none;
-    }
-    .note.has-tape .tape { display: block; }
-
-    .paper {
-      position: relative;
-      z-index: 2;
-      min-height: 148px;
-      padding: 18px 18px 22px;
-      background: var(--c);
-      box-shadow:
-        3px 6px 10px rgb(0 0 0 / 0.18),
-        inset 0 -2px 4px rgb(0 0 0 / 0.06);
-      clip-path: polygon(
-        0 0,
-        100% 0,
-        100% calc(100% - var(--cut)),
-        calc(100% - var(--cut)) 100%,
-        0 100%
-      );
-      transition: clip-path 0.55s cubic-bezier(0.22, 0.8, 0.36, 1);
-    }
-    .paper::after {
-      content: "";
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      width: 16px;
-      height: 16px;
-      background: linear-gradient(135deg, transparent 49.5%, rgb(0 0 0 / 0.1) 50%, rgb(255 255 255 / 0.18) 100%);
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-    .note:hover .paper::after,
-    .note:focus-visible .paper::after,
-    .note.is-open .paper::after { opacity: 0; }
-    .kicker {
-      margin: 0 0 8px;
-      font-family: "Noto Sans SC", sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      color: rgb(0 0 0 / 0.55);
-    }
-    .paper h3 {
-      margin: 0 0 8px;
-      font-family: var(--note-font);
-      font-size: var(--note-title);
-      font-weight: var(--note-weight);
-      line-height: 1.35;
-      word-break: keep-all;
-    }
-    .paper p {
-      margin: 0;
-      font-family: var(--note-font);
-      font-size: var(--note-body);
-      font-weight: var(--body-weight);
-      line-height: var(--note-lh);
-      color: #2c2418;
-    }
-
-    /* 右下角：把 css3dlab 的多段铰链转 45°，纸是弯的，不是一块三角在翻面 */
-    .curl {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      z-index: 4;
-      width: var(--cut);
-      height: var(--cut);
-      overflow: hidden;
-      pointer-events: none;
-      perspective: 480px;
-      opacity: 0;
-      clip-path: polygon(100% 0, 100% 100%, 0 100%);
-      transition:
-        opacity 0.2s ease,
-        clip-path 0.5s ease,
-        width 0.5s cubic-bezier(0.22, 0.8, 0.36, 1),
-        height 0.5s cubic-bezier(0.22, 0.8, 0.36, 1);
-    }
-    .note:hover .curl,
-    .note:focus-visible .curl,
-    .note.is-open .curl {
-      opacity: 1;
-      overflow: visible;
-      transform-style: preserve-3d;
-      clip-path: inset(-80px -80px -80px -80px);
-    }
-    .curl__rig {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: calc(var(--cut) * 1.414);
-      transform-origin: right top;
-      transform: rotate(45deg);
-      transform-style: preserve-3d;
-    }
-    .seg {
-      display: block;
-      position: relative;
-      width: 100%;
-      height: 18px;
-      background: var(--c);
-      transform-origin: 50% 0;
-      transform-style: preserve-3d;
-      transform: rotateX(6deg);
-      box-shadow: 0 1px 0 rgb(0 0 0 / 0.04);
-      transition: transform 0.55s cubic-bezier(0.22, 1.2, 0.36, 1);
-    }
-    .seg > .seg {
-      position: absolute;
-      left: 0;
-      top: calc(100% - 2px);
-      margin: 0;
-    }
-    .s2 { height: 16px; background: linear-gradient(var(--c), var(--e)); transition-delay: 0.04s; }
-    .s3 {
-      height: 22px;
-      background: linear-gradient(var(--e) 10%, var(--back));
-      transition-delay: 0.08s;
-    }
-    .s3::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgb(255 255 255 / 0.35), transparent 70%);
-      opacity: 0.25;
-      pointer-events: none;
-    }
-    .curl__under {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-      width: var(--cut);
-      height: var(--cut);
-      pointer-events: none;
-      background: radial-gradient(120% 120% at 100% 100%, rgb(40 18 2 / 0.42), transparent 72%);
-      clip-path: polygon(100% 0, 100% 100%, 0 100%);
-    }
-
-    .note:hover,
-    .note:focus-visible,
-    .note.is-open {
-      --cut: 56px;
-      z-index: 6;
-      transform: rotate(calc(var(--r) * 0.4)) rotateX(-8deg) rotateY(10deg) translateZ(10px);
-    }
-    .note:hover .s1,
-    .note:focus-visible .s1,
-    .note.is-open .s1 { transform: rotateX(26deg); }
-    .note:hover .s2,
-    .note:focus-visible .s2,
-    .note.is-open .s2 { transform: rotateX(38deg); }
-    .note:hover .s3,
-    .note:focus-visible .s3,
-    .note.is-open .s3 { transform: rotateX(48deg); }
-    .note:hover .s3::after,
-    .note:focus-visible .s3::after,
-    .note.is-open .s3::after { opacity: 0.85; }
-    .note:hover .shade,
-    .note:focus-visible .shade,
-    .note.is-open .shade {
-      opacity: 0.9;
-      transform: translateZ(-2px) translate(10px, 12px) scale(1.05);
-    }
-
-    .y { --c: #fff9a3; --e: #ffef70; --back: #c9a227; --pin: #c62828; }
-    .g { --c: #b8f5c8; --e: #7ee8a2; --back: #3ea86a; --pin: #2e7d32; }
-    .b { --c: #b4d4ff; --e: #7eb8f7; --back: #3f7cc4; --pin: #1565c0; }
-    .o { --c: #ffd4a3; --e: #ffbb70; --back: #d48432; --pin: #ef6c00; }
-    .p { --c: #e8b4f8; --e: #d280f0; --back: #9a48b8; --pin: #8e24aa; }
-    .r { --c: #ffb4b4; --e: #ff8080; --back: #d25555; --pin: #c62828; }
-    .teal { --c: #b4f5ef; --e: #70e8de; --back: #2ea89c; --pin: #00897b; }
-    .w { --c: #fff; --e: #f0f0f0; --back: #b9b9b9; --pin: #e0402a; }
+    .y { --c: #fff9a3; --back: #c9a227; --pin: #c62828; }
+    .g { --c: #b8f5c8; --back: #3ea86a; --pin: #2e7d32; }
+    .b { --c: #b4d4ff; --back: #3f7cc4; --pin: #1565c0; }
+    .o { --c: #ffd4a3; --back: #d48432; --pin: #ef6c00; }
+    .p { --c: #e8b4f8; --back: #9a48b8; --pin: #8e24aa; }
+    .r { --c: #ffb4b4; --back: #d25555; --pin: #c62828; }
+    .teal { --c: #b4f5ef; --back: #2ea89c; --pin: #00897b; }
 
     .hint {
       margin: 40px 8px 0;
@@ -502,48 +238,16 @@
       font-size: 13px;
       line-height: 1.8;
     }
-    .hint code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 12px;
-      background: rgb(110 74 36 / 0.08);
-      padding: 1px 5px;
-    }
+    .hint code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: rgb(110 74 36 / 0.08); padding: 1px 5px; }
 
-    @media (max-width: 960px) {
-      .columns { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 640px) {
-      .page { padding: 12px 12px 64px; }
-      .toolbar {
-        position: static;
-        transform: none;
-        grid-template-columns: 1fr;
-      }
-      .columns { grid-template-columns: 1fr; }
+    @media (max-width: 860px) {
+      .columns, .toolbar { grid-template-columns: 1fr; }
       .font-switch { justify-content: flex-start; }
       .font-switch span { text-align: left; }
       .note { max-width: none; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .note,
-      .paper,
-      .seg,
-      .shade { transition: none !important; }
-      .note:hover,
-      .note:focus-visible,
-      .note.is-open {
-        --cut: 0px;
-        transform: rotate(var(--r)) translateZ(2px);
-      }
-      .note:hover .s1,
-      .note:focus-visible .s1,
-      .note.is-open .s1,
-      .note:hover .s2,
-      .note:focus-visible .s2,
-      .note.is-open .s2,
-      .note:hover .s3,
-      .note:focus-visible .s3,
-      .note.is-open .s3 { transform: rotateX(7deg); }
+      .note { transform: none; }
     }
   </style>
 </head>
@@ -553,10 +257,8 @@
       <div>
         <h1>便签墙示例</h1>
         <p>
-          排版学 <a href="https://bythewei.dev/" target="_blank" rel="noreferrer">bythewei.dev</a>
-          的软木板分栏；悬停剥离学
-          <a href="https://css3dlab.edgarasneverdauskas.com/models/stickynotes/" target="_blank" rel="noreferrer">css3dlab</a>。
-          这是独立页。写完的便签只放简介，点进去进原文。右下角用多段铰链卷起来，不是一块三角翻面。
+          手写折角只能切三角，所以改用 <a href="https://andrewplummer.github.io/peel-js/" target="_blank" rel="noreferrer">Peel.js</a>
+          （专门从角落揭一层纸，无依赖）。悬停从右下角翻开背面，写完的点进去进原文。现有主页没改。
         </p>
       </div>
       <div class="font-switch" role="group" aria-label="便签中文字体">
@@ -569,7 +271,7 @@
     </header>
 
     <div class="banner">
-      <small>SANDBOX · 不会进导航</small>
+      <small>SANDBOX · PEEL.JS</small>
       <strong>不会就学，就这么简单。</strong>
     </div>
 
@@ -578,146 +280,166 @@
       <div class="stat"><b>4</b><span>还在写 · 只看简介</span></div>
     </div>
 
-    <div class="board">
-      <div class="columns">
-        <section class="column">
-          <h2 class="column-header">写完的 · 点进去读</h2>
+    <div class="columns">
+      <section class="column">
+        <h2 class="column-header">写完的 · 点进去读</h2>
 
-          <a class="note y has-tape" style="--r: -2.1deg" href="/exam/interview/Promise面试题">
-            <i class="shade"></i><i class="pin"></i><i class="tape"></i>
-            <div class="paper">
-              <p class="kicker">面试题</p>
-              <h3>Promise 面试题</h3>
-              <p>按面试复习整理：三种状态、链式调用、静态方法，还有 async / await 里容易说反的地方。</p>
-            </div>
-            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
-            <i class="curl__under"></i>
-          </a>
+        <a class="note peel y" style="--r: -1.6deg" href="/exam/interview/Promise面试题">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">面试题</p>
+            <h3>Promise 面试题</h3>
+            <p>按面试复习整理：三种状态、链式调用、静态方法，还有 async / await 里容易说反的地方。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </a>
 
-          <a class="note g" style="--r: 1.6deg" href="/frontEnd/js/let、const、var三剑客">
-            <i class="shade"></i><i class="pin"></i>
-            <div class="paper">
-              <p class="kicker">前端</p>
-              <h3>let、const、var</h3>
-              <p>三种声明差在作用域、提升和能不能重复声明。var 能跨块，let / const 不能。</p>
-            </div>
-            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
-            <i class="curl__under"></i>
-          </a>
+        <a class="note peel g" style="--r: 1.4deg" href="/frontEnd/js/let、const、var三剑客">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">前端</p>
+            <h3>let、const、var</h3>
+            <p>三种声明差在作用域、提升和能不能重复声明。var 能跨块，let / const 不能。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </a>
 
-          <a class="note b" style="--r: -1.2deg" href="/frontEnd/html/基础知识">
-            <i class="shade"></i><i class="pin"></i>
-            <div class="paper">
-              <p class="kicker">前端</p>
-              <h3>HTML5 语义化</h3>
-              <p>用合理的标签说出结构。样式丢了也看得懂，也更利于搜索引擎和读屏。</p>
-            </div>
-            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
-            <i class="curl__under"></i>
-          </a>
+        <a class="note peel b" style="--r: -1.1deg" href="/frontEnd/html/基础知识">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">前端</p>
+            <h3>HTML5 语义化</h3>
+            <p>用合理的标签说出结构。样式丢了也看得懂，也更利于搜索引擎和读屏。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </a>
 
-          <a class="note o has-tape" style="--r: 1.4deg" href="/DevOps/docker/Docker初印象">
-            <i class="shade"></i><i class="pin"></i><i class="tape"></i>
-            <div class="paper">
-              <p class="kicker">Docker</p>
-              <h3>Docker 初印象</h3>
-              <p>容器把环境和配置打包带走。体积比虚拟机小，启动也更快，先建立这个印象。</p>
-            </div>
-            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
-            <i class="curl__under"></i>
-          </a>
-        </section>
+        <a class="note peel o" style="--r: 1.2deg" href="/DevOps/docker/Docker初印象">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">Docker</p>
+            <h3>Docker 初印象</h3>
+            <p>容器把环境和配置打包带走。体积比虚拟机小，启动也更快，先建立这个印象。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </a>
+      </section>
 
-        <section class="column">
-          <h2 class="column-header">还在写 · 还不能点</h2>
+      <section class="column">
+        <h2 class="column-header">还在写 · 还不能点</h2>
 
-          <article class="note o note--draft" style="--r: 2.2deg">
-            <i class="shade"></i><i class="pin"></i>
-            <div class="paper">
-              <p class="kicker">前端</p>
-              <h3>事件循环</h3>
-              <p>宏任务和微任务怎么排队，浏览器什么时候去渲染。</p>
-            </div>
-            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
-            <i class="curl__under"></i>
-          </article>
+        <article class="note peel o note--draft" style="--r: 1.8deg">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">前端</p>
+            <h3>事件循环</h3>
+            <p>宏任务和微任务怎么排队，浏览器什么时候去渲染。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </article>
 
-          <article class="note p note--draft" style="--r: -1.8deg">
-            <i class="shade"></i><i class="pin"></i>
-            <div class="paper">
-              <p class="kicker">前端</p>
-              <h3>闭包</h3>
-              <p>函数把外层变量包在里面带走。面试常问它会不会把内存漏掉。</p>
-            </div>
-            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
-            <i class="curl__under"></i>
-          </article>
+        <article class="note peel p note--draft" style="--r: -1.5deg">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">前端</p>
+            <h3>闭包</h3>
+            <p>函数把外层变量包在里面带走。面试常问它会不会把内存漏掉。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </article>
 
-          <article class="note teal note--draft" style="--r: 0.8deg">
-            <i class="shade"></i><i class="pin"></i>
-            <div class="paper">
-              <p class="kicker">前端</p>
-              <h3>this</h3>
-              <p>谁调用它，它就指向谁。箭头函数不自己长 this，沿外层找。</p>
-            </div>
-            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
-            <i class="curl__under"></i>
-          </article>
+        <article class="note peel teal note--draft" style="--r: 0.7deg">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">前端</p>
+            <h3>this</h3>
+            <p>谁调用它，它就指向谁。箭头函数不自己长 this，沿外层找。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </article>
 
-          <article class="note r note--draft" style="--r: -2.4deg">
-            <i class="shade"></i><i class="pin"></i>
-            <div class="paper">
-              <p class="kicker">前端</p>
-              <h3>原型链</h3>
-              <p>自己身上找不到的属性，就顺着原型往上问，一直问到 null。</p>
-            </div>
-            <span class="curl" aria-hidden="true"><span class="curl__rig"><i class="seg s1"><i class="seg s2"><i class="seg s3"></i></i></i></span></span>
-            <i class="curl__under"></i>
-          </article>
-        </section>
-      </div>
+        <article class="note peel r note--draft" style="--r: -2deg">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">前端</p>
+            <h3>原型链</h3>
+            <p>自己身上找不到的属性，就顺着原型往上问，一直问到 null。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </article>
+      </section>
     </div>
 
     <aside class="hint">
-      卷边不靠动画库。GSAP 只能把同一套 transform 缓动得更顺，弯度还是 CSS 多段铰链在近似；真曲面要 WebGL，对目录页过重。
-      文件在 <code>public/demos/sticky-wall.html</code>。
+      这一版用的是 <a href="https://andrewplummer.github.io/peel-js/" target="_blank" rel="noreferrer">Peel.js</a>，
+      源码在 <code>public/demos/lib/</code>。悬停从右下角揭开；写完的点进去还是原来的文章。
+      翻书库（StPageFlip / turn.js）是整本翻页，不适合一张便签。WebGL 的 paperlab / webgl-page-curl 更真，但太重。
     </aside>
   </div>
 
+  <script src="./lib/peel.js"></script>
   <script>
     const root = document.documentElement;
     const buttons = [...document.querySelectorAll(".font-switch button")];
-
     function setFont(name) {
       root.dataset.font = name;
-      buttons.forEach((btn) => {
-        btn.setAttribute("aria-pressed", String(btn.dataset.font === name));
-      });
+      buttons.forEach((btn) => btn.setAttribute("aria-pressed", String(btn.dataset.font === name)));
       try { localStorage.setItem("sticky-wall-font", name); } catch {}
     }
-
-    buttons.forEach((btn) => {
-      btn.addEventListener("click", () => setFont(btn.dataset.font));
-    });
-
+    buttons.forEach((btn) => btn.addEventListener("click", () => setFont(btn.dataset.font)));
     try {
       const saved = localStorage.getItem("sticky-wall-font");
       if (saved && buttons.some((btn) => btn.dataset.font === saved)) setFont(saved);
       else setFont("sans");
-    } catch {
-      setFont("sans");
+    } catch { setFont("sans"); }
+
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function animatePath(peel, from, to, ms) {
+      const start = performance.now();
+      if (peel._raf) cancelAnimationFrame(peel._raf);
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / ms);
+        peel.setTimeAlongPath(from + (to - from) * easeOut(t));
+        if (t < 1) peel._raf = requestAnimationFrame(step);
+      };
+      peel._raf = requestAnimationFrame(step);
     }
 
-    const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    if (!canHover) {
-      document.querySelectorAll(".note--draft").forEach((note) => {
-        note.addEventListener("click", () => {
-          document.querySelectorAll(".note.is-open").forEach((open) => {
-            if (open !== note) open.classList.remove("is-open");
-          });
-          note.classList.toggle("is-open");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (window.Peel && Peel.supported) {
+      document.querySelectorAll(".note.peel").forEach((el) => {
+        const peel = new Peel(el, {
+          corner: Peel.Corners.BOTTOM_RIGHT,
+          backReflection: true,
+          topShadow: true,
+          bottomShadow: true,
+          setPeelOnInit: false,
+          dragPreventsDefault: false,
+        });
+        const w = el.offsetWidth;
+        const h = el.offsetHeight;
+        peel.setPeelPath(w - 1, h - 1, w - 108, h - 88);
+        peel.setTimeAlongPath(0);
+
+        el.addEventListener("pointerenter", () => {
+          if (reduce) peel.setTimeAlongPath(1);
+          else animatePath(peel, peel.timeAlongPath || 0, 1, 460);
+        });
+        el.addEventListener("pointerleave", () => {
+          if (reduce) peel.setTimeAlongPath(0);
+          else animatePath(peel, peel.timeAlongPath || 1, 0, 400);
         });
       });
+    } else {
+      document.querySelectorAll(".note.peel").forEach((el) => el.classList.add("peel-ready"));
     }
   </script>
 </body>
