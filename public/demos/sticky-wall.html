@@ -10,6 +10,24 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" />
   <link rel="stylesheet" href="./lib/peel.css" />
   <style>
+    /* Keep Peel.js layer layout even if peel.css fails to load. */
+    .peel-layer {
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      top: 0; right: 0; bottom: 0; left: 0;
+      user-select: none;
+      transform-origin: top left;
+    }
+    .peel-svg-clip-element {
+      position: absolute;
+      top: -10000px;
+      left: -10000px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
     :root {
       --navy: #1a1a2e;
       --gold: #f0b847;
@@ -155,20 +173,50 @@
       overflow: visible;
       color: var(--ink);
       transform: rotate(var(--r));
-      filter: drop-shadow(3px 8px 10px rgb(40 18 2 / 0.28));
+      box-shadow: 3px 8px 16px rgb(40 18 2 / 0.22);
     }
     .note:hover,
     .note:focus-visible { z-index: 6; }
     .note--draft { cursor: default; }
-    .note.peel { opacity: 0; }
-    .note.peel-ready { opacity: 1; }
-    .column, .columns { overflow: visible; }
+    .column, .columns, html, body { overflow: visible; }
 
     .peel-top,
     .peel-back,
     .peel-bottom { background: var(--c); }
     .peel-back { background: var(--back); }
     .peel-bottom { background: transparent; }
+
+    /* If Peel.js never boots, still fold a paper flap on hover. */
+    .note.peel-fallback .peel-top,
+    .note.peel-fallback .peel-back,
+    .note.peel-fallback .peel-bottom {
+      position: absolute;
+      inset: 0;
+    }
+    .note.peel-fallback {
+      --cut: 0px;
+    }
+    .note.peel-fallback:hover,
+    .note.peel-fallback:focus-visible {
+      --cut: 78px;
+    }
+    .note.peel-fallback .peel-top {
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+      transition: clip-path 0.4s ease;
+    }
+    .note.peel-fallback .peel-back {
+      inset: auto;
+      right: 0;
+      bottom: 0;
+      width: var(--cut);
+      height: var(--cut);
+      background: var(--back);
+      transform: none;
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+      box-shadow: -2px -2px 6px rgb(0 0 0 / 0.2);
+      pointer-events: none;
+      transition: width 0.4s ease, height 0.4s ease;
+    }
 
     .face {
       height: 100%;
@@ -401,46 +449,106 @@
       else setFont("sans");
     } catch { setFont("sans"); }
 
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = src;
+        s.onload = () => resolve(src);
+        s.onerror = () => reject(src);
+        document.head.appendChild(s);
+      });
+    }
+
+    async function ensurePeel() {
+      if (window.Peel) return true;
+      const urls = ["./lib/peel.js", "/demos/lib/peel.js", "lib/peel.js"];
+      for (const url of urls) {
+        try {
+          await loadScript(url);
+          if (window.Peel) return true;
+        } catch {}
+      }
+      return false;
+    }
+
     function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
     function animatePath(peel, from, to, ms) {
       const start = performance.now();
       if (peel._raf) cancelAnimationFrame(peel._raf);
       const step = (now) => {
         const t = Math.min(1, (now - start) / ms);
-        peel.setTimeAlongPath(from + (to - from) * easeOut(t));
+        const v = from + (to - from) * easeOut(t);
+        peel.setTimeAlongPath(v);
         if (t < 1) peel._raf = requestAnimationFrame(step);
       };
       peel._raf = requestAnimationFrame(step);
     }
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (window.Peel && Peel.supported) {
-      document.querySelectorAll(".note.peel").forEach((el) => {
-        const peel = new Peel(el, {
-          corner: Peel.Corners.BOTTOM_RIGHT,
-          backReflection: true,
-          topShadow: true,
-          bottomShadow: true,
-          setPeelOnInit: false,
-          dragPreventsDefault: false,
-        });
-        const w = el.offsetWidth;
-        const h = el.offsetHeight;
-        peel.setPeelPath(w - 1, h - 1, w - 108, h - 88);
-        peel.setTimeAlongPath(0);
-
-        el.addEventListener("pointerenter", () => {
-          if (reduce) peel.setTimeAlongPath(1);
-          else animatePath(peel, peel.timeAlongPath || 0, 1, 460);
-        });
-        el.addEventListener("pointerleave", () => {
-          if (reduce) peel.setTimeAlongPath(0);
-          else animatePath(peel, peel.timeAlongPath || 1, 0, 400);
-        });
+    function bindNote(el) {
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const peel = new Peel(el, {
+        corner: Peel.Corners.BOTTOM_RIGHT,
+        backReflection: true,
+        topShadow: true,
+        bottomShadow: true,
+        setPeelOnInit: false,
+        dragPreventsDefault: false,
       });
-    } else {
-      document.querySelectorAll(".note.peel").forEach((el) => el.classList.add("peel-ready"));
+
+      function layout() {
+        peel.setupDimensions();
+        peel.setCorner(Peel.Corners.BOTTOM_RIGHT);
+        const w = peel.width || el.offsetWidth;
+        const h = peel.height || el.offsetHeight;
+        peel.setPeelPath(Math.max(w - 2, 1), Math.max(h - 2, 1), w - 110, h - 90);
+      }
+
+      layout();
+      peel.setTimeAlongPath(0);
+      el.classList.add("peel-ready");
+
+      let inside = false;
+      const open = () => {
+        if (inside) return;
+        inside = true;
+        layout();
+        const from = typeof peel.timeAlongPath === "number" ? peel.timeAlongPath : 0;
+        if (reduce) peel.setTimeAlongPath(1);
+        else animatePath(peel, from, 1, 460);
+      };
+      const close = () => {
+        if (!inside) return;
+        inside = false;
+        const from = typeof peel.timeAlongPath === "number" ? peel.timeAlongPath : 1;
+        if (reduce) peel.setTimeAlongPath(0);
+        else animatePath(peel, from, 0, 400);
+      };
+
+      el.addEventListener("mouseenter", open);
+      el.addEventListener("mouseleave", close);
+      el.addEventListener("pointerenter", open);
+      el.addEventListener("pointerleave", close);
+      el.addEventListener("focusin", open);
+      el.addEventListener("focusout", close);
     }
+
+    function useFallback() {
+      document.querySelectorAll(".note.peel").forEach((el) => {
+        el.classList.add("peel-fallback", "peel-ready");
+      });
+    }
+
+    async function boot() {
+      const ok = await ensurePeel();
+      if (!ok || !window.Peel || !Peel.supported) {
+        useFallback();
+        return;
+      }
+      document.querySelectorAll(".note.peel").forEach(bindNote);
+    }
+
+    if (document.readyState === "complete") boot();
+    else window.addEventListener("load", boot);
   </script>
 </body>
 </html>

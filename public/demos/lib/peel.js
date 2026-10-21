@@ -82,7 +82,16 @@
   // CSS Helpers
 
   function setCSSClip(el, clip) {
-    el.style[clipProperty] = clip;
+    var abs = clip;
+    if (clip && clip.indexOf('url(#') === 0) {
+      var id = clip.slice(5, -1);
+      var base = (win.location.href || '').split('#')[0];
+      abs = 'url("' + base + '#' + id + '")';
+    }
+    el.style[clipProperty] = abs;
+    if (el.style.webkitClipPath !== undefined) {
+      el.style.webkitClipPath = abs;
+    }
   }
 
   function setTransform(el, t) {
@@ -1260,6 +1269,15 @@
       return round(p.x) + ',' + round(p.y);
     }).join(' ');
     setSVGAttribute(this.shape, 'points', str);
+    // CSS polygon() does not need url(#id), so the peel still works if
+    // the SVG fragment reference is resolved against the wrong base URL.
+    if (points && points.length) {
+      var css = 'polygon(' + points.map(function(p) {
+        return round(p.x) + 'px ' + round(p.y) + 'px';
+      }).join(',') + ')';
+      this.el.style.clipPath = css;
+      this.el.style.webkitClipPath = css;
+    }
   }
 
   /**
