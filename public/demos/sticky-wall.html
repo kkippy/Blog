@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>便签墙示例 · Peel.js</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Zhi+Mang+Xing&display=swap" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" />
+  <link rel="stylesheet" href="./lib/peel.css" />
+  <style>
+    /* Keep Peel.js layer layout even if peel.css fails to load. */
+    .peel-layer {
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      top: 0; right: 0; bottom: 0; left: 0;
+      user-select: none;
+      transform-origin: top left;
+    }
+    .peel-svg-clip-element {
+      position: absolute;
+      top: -10000px;
+      left: -10000px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+    :root {
+      --navy: #1a1a2e;
+      --gold: #f0b847;
+      --ink: #1a1a1a;
+      --note-font: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+      --note-title: 20px;
+      --note-body: 14px;
+      --note-lh: 1.55;
+      --note-weight: 700;
+      --body-weight: 400;
+    }
+    html[data-font="sans"] {
+      --note-font: "Noto Sans SC", "PingFang SC", sans-serif;
+      --note-title: 19px;
+      --note-body: 13.5px;
+      --note-lh: 1.55;
+      --note-weight: 700;
+    }
+    html[data-font="kai"] {
+      --note-font: "LXGW WenKai", "LXGW WenKai Screen", serif;
+      --note-title: 21px;
+      --note-body: 15px;
+      --note-lh: 1.7;
+      --note-weight: 700;
+    }
+    html[data-font="hand"] {
+      --note-font: "Ma Shan Zheng", cursive;
+      --note-title: 26px;
+      --note-body: 20px;
+      --note-lh: 1.55;
+      --note-weight: 400;
+    }
+    html[data-font="grass"] {
+      --note-font: "Zhi Mang Xing", cursive;
+      --note-title: 28px;
+      --note-body: 22px;
+      --note-lh: 1.45;
+      --note-weight: 400;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Noto Sans SC", "PingFang SC", sans-serif;
+      color: var(--ink);
+      background:
+        repeating-linear-gradient(0deg, rgb(0 0 0 / 0.08) 0 1px, transparent 1px 40px),
+        repeating-linear-gradient(90deg, rgb(0 0 0 / 0.05) 0 1px, transparent 1px 40px),
+        radial-gradient(120% 90% at 18% 12%, #9b7a20 0%, transparent 46%),
+        radial-gradient(90% 80% at 82% 78%, #6e4e0c 0%, transparent 50%),
+        linear-gradient(135deg, #9b7a20, #8b6914 42%, #7a5c0f);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Ccircle cx='12' cy='18' r='1.1' fill='%235c3d0a' fill-opacity='.55'/%3E%3Ccircle cx='46' cy='9' r='.8' fill='%23f6e2b8' fill-opacity='.35'/%3E%3Ccircle cx='78' cy='52' r='1.3' fill='%234a3008' fill-opacity='.45'/%3E%3Ccircle cx='118' cy='24' r='.9' fill='%235c3d0a' fill-opacity='.5'/%3E%3Ccircle cx='21' cy='86' r='1' fill='%23e8c98a' fill-opacity='.28'/%3E%3Ccircle cx='97' cy='98' r='1.4' fill='%233d2706' fill-opacity='.4'/%3E%3C/svg%3E");
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 22px 22px 80px;
+    }
+    .toolbar {
+      position: sticky;
+      top: 14px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px 24px;
+      padding: 16px 18px 14px;
+      background: linear-gradient(180deg, #f7f0d8, #efe3c2);
+      box-shadow: 0 10px 24px rgb(40 22 4 / 0.28), inset 0 1px 0 rgb(255 255 255 / 0.55);
+    }
+    .toolbar h1 { margin: 0 0 6px; font-size: 22px; }
+    .toolbar p { margin: 0; max-width: 58ch; color: #3d3424; font-size: 13px; line-height: 1.7; }
+    .font-switch { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+    .font-switch span { width: 100%; text-align: right; font-size: 11px; letter-spacing: 0.16em; color: #6a5b3f; }
+    .font-switch button {
+      appearance: none;
+      border: 1px solid rgb(90 66 35 / 0.28);
+      background: #fff8e6;
+      color: #2a2114;
+      padding: 7px 11px;
+      font: 500 13px/1.2 "Noto Sans SC", sans-serif;
+      cursor: pointer;
+    }
+    .font-switch button[aria-pressed="true"] {
+      background: var(--navy);
+      color: var(--gold);
+      border-color: var(--navy);
+    }
+
+    .banner {
+      margin: 28px 8px 18px;
+      padding: 18px 22px;
+      background: var(--navy);
+      color: var(--gold);
+      box-shadow: 6px 8px 0 rgb(0 0 0 / 0.22);
+    }
+    .banner small { display: block; letter-spacing: 0.18em; font-size: 11px; color: rgb(255 255 255 / 0.55); }
+    .banner strong { display: block; margin-top: 6px; font-size: clamp(28px, 4vw, 42px); }
+
+    .stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 8px 28px; }
+    .stat { min-width: 120px; padding: 10px 14px; background: rgb(26 26 46 / 0.92); color: #fff; }
+    .stat b { display: block; color: var(--gold); font-size: 22px; }
+    .stat span { font-size: 12px; color: rgb(255 255 255 / 0.62); }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px 40px;
+    }
+    .column { display: flex; flex-direction: column; gap: 28px; }
+    .column-header {
+      margin: 0 10px;
+      padding: 8px 12px;
+      background: rgb(26 26 46 / 0.9);
+      color: var(--gold);
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-align: center;
+    }
+
+    a.note { text-decoration: none; color: inherit; }
+    .note {
+      --c: #fff9a3;
+      --back: #d4b84a;
+      --r: 0deg;
+      --pin: #c62828;
+      display: block;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 280px;
+      height: 176px;
+      margin: 16px auto;
+      overflow: visible;
+      color: var(--ink);
+      transform: rotate(var(--r));
+      box-shadow: 3px 8px 16px rgb(40 18 2 / 0.22);
+    }
+    .note:hover,
+    .note:focus-visible { z-index: 6; }
+    .note--draft { cursor: default; }
+    .column, .columns, html, body { overflow: visible; }
+
+    .peel-top,
+    .peel-back,
+    .peel-bottom { background: var(--c); }
+    .peel-back { background: var(--back); }
+    .peel-bottom { background: transparent; }
+
+    /* If Peel.js never boots, still fold a paper flap on hover. */
+    .note.peel-fallback .peel-top,
+    .note.peel-fallback .peel-back,
+    .note.peel-fallback .peel-bottom {
+      position: absolute;
+      inset: 0;
+    }
+    .note.peel-fallback {
+      --cut: 0px;
+    }
+    .note.peel-fallback:hover,
+    .note.peel-fallback:focus-visible {
+      --cut: 78px;
+    }
+    .note.peel-fallback .peel-top {
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+      transition: clip-path 0.4s ease;
+    }
+    .note.peel-fallback .peel-back {
+      inset: auto;
+      right: 0;
+      bottom: 0;
+      width: var(--cut);
+      height: var(--cut);
+      background: var(--back);
+      transform: none;
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+      box-shadow: -2px -2px 6px rgb(0 0 0 / 0.2);
+      pointer-events: none;
+      transition: width 0.4s ease, height 0.4s ease;
+    }
+
+    .face {
+      height: 100%;
+      padding: 18px 18px 20px;
+    }
+    .kicker {
+      margin: 0 0 8px;
+      font-family: "Noto Sans SC", sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: rgb(0 0 0 / 0.55);
+    }
+    .face h3 {
+      margin: 0 0 8px;
+      font-family: var(--note-font);
+      font-size: var(--note-title);
+      font-weight: var(--note-weight);
+      line-height: 1.35;
+      word-break: keep-all;
+    }
+    .face p {
+      margin: 0;
+      font-family: var(--note-font);
+      font-size: var(--note-body);
+      font-weight: var(--body-weight);
+      line-height: var(--note-lh);
+      color: #2c2418;
+    }
+
+    .pin {
+      position: absolute;
+      top: 7px;
+      left: 50%;
+      z-index: 8;
+      width: 15px;
+      height: 15px;
+      margin-left: -7.5px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 28%, #fff6, var(--pin) 52%, #4a0909);
+      box-shadow: 1px 2px 3px rgb(0 0 0 / 0.45), inset 0 1px 0 rgb(255 255 255 / 0.45);
+      pointer-events: none;
+    }
+    .pin::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 13px;
+      width: 3px;
+      height: 9px;
+      margin-left: -1.5px;
+      background: linear-gradient(#cfd8dc, #78909c);
+    }
+
+    .y { --c: #fff9a3; --back: #c9a227; --pin: #c62828; }
+    .g { --c: #b8f5c8; --back: #3ea86a; --pin: #2e7d32; }
+    .b { --c: #b4d4ff; --back: #3f7cc4; --pin: #1565c0; }
+    .o { --c: #ffd4a3; --back: #d48432; --pin: #ef6c00; }
+    .p { --c: #e8b4f8; --back: #9a48b8; --pin: #8e24aa; }
+    .r { --c: #ffb4b4; --back: #d25555; --pin: #c62828; }
+    .teal { --c: #b4f5ef; --back: #2ea89c; --pin: #00897b; }
+
+    .hint {
+      margin: 40px 8px 0;
+      padding: 16px 18px;
+      background: rgb(246 240 226 / 0.88);
+      color: #3d3424;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .hint code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: rgb(110 74 36 / 0.08); padding: 1px 5px; }
+
+    @media (max-width: 860px) {
+      .columns, .toolbar { grid-template-columns: 1fr; }
+      .font-switch { justify-content: flex-start; }
+      .font-switch span { text-align: left; }
+      .note { max-width: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .note { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="toolbar">
+      <div>
+        <h1>便签墙示例</h1>
+        <p>
+          手写折角只能切三角，所以改用 <a href="https://andrewplummer.github.io/peel-js/" target="_blank" rel="noreferrer">Peel.js</a>
+          （专门从角落揭一层纸，无依赖）。悬停从右下角翻开背面，写完的点进去进原文。现有主页没改。
+        </p>
+      </div>
+      <div class="font-switch" role="group" aria-label="便签中文字体">
+        <span>便签上的中文</span>
+        <button type="button" data-font="sans" aria-pressed="true">黑体 · 常见</button>
+        <button type="button" data-font="kai" aria-pressed="false">文楷 · 可读手写</button>
+        <button type="button" data-font="hand" aria-pressed="false">马善政 · 手写楷</button>
+        <button type="button" data-font="grass" aria-pressed="false">芝麻星 · 更草</button>
+      </div>
+    </header>
+
+    <div class="banner">
+      <small>SANDBOX · PEEL.JS</small>
+      <strong>不会就学，就这么简单。</strong>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>4</b><span>写完的 · 可以点</span></div>
+      <div class="stat"><b>4</b><span>还在写 · 只看简介</span></div>
+    </div>
+
+    <div class="columns">
+      <section class="column">
+        <h2 class="column-header">写完的 · 点进去读</h2>
+
+        <a class="note peel y" style="--r: -1.6deg" href="/exam/interview/Promise面试题">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">面试题</p>
+            <h3>Promise 面试题</h3>
+            <p>按面试复习整理：三种状态、链式调用、静态方法，还有 async / await 里容易说反的地方。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </a>
+
+        <a class="note peel g" style="--r: 1.4deg" href="/frontEnd/js/let、const、var三剑客">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">前端</p>
+            <h3>let、const、var</h3>
+            <p>三种声明差在作用域、提升和能不能重复声明。var 能跨块，let / const 不能。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </a>
+
+        <a class="note peel b" style="--r: -1.1deg" href="/frontEnd/html/基础知识">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">前端</p>
+            <h3>HTML5 语义化</h3>
+            <p>用合理的标签说出结构。样式丢了也看得懂，也更利于搜索引擎和读屏。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </a>
+
+        <a class="note peel o" style="--r: 1.2deg" href="/DevOps/docker/Docker初印象">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">Docker</p>
+            <h3>Docker 初印象</h3>
+            <p>容器把环境和配置打包带走。体积比虚拟机小，启动也更快，先建立这个印象。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </a>
+      </section>
+
+      <section class="column">
+        <h2 class="column-header">还在写 · 还不能点</h2>
+
+        <article class="note peel o note--draft" style="--r: 1.8deg">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">前端</p>
+            <h3>事件循环</h3>
+            <p>宏任务和微任务怎么排队，浏览器什么时候去渲染。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </article>
+
+        <article class="note peel p note--draft" style="--r: -1.5deg">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">前端</p>
+            <h3>闭包</h3>
+            <p>函数把外层变量包在里面带走。面试常问它会不会把内存漏掉。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </article>
+
+        <article class="note peel teal note--draft" style="--r: 0.7deg">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">前端</p>
+            <h3>this</h3>
+            <p>谁调用它，它就指向谁。箭头函数不自己长 this，沿外层找。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </article>
+
+        <article class="note peel r note--draft" style="--r: -2deg">
+          <i class="pin"></i>
+          <div class="peel-top"><div class="face">
+            <p class="kicker">前端</p>
+            <h3>原型链</h3>
+            <p>自己身上找不到的属性，就顺着原型往上问，一直问到 null。</p>
+          </div></div>
+          <div class="peel-back"></div>
+          <div class="peel-bottom"></div>
+        </article>
+      </section>
+    </div>
+
+    <aside class="hint">
+      这一版用的是 <a href="https://andrewplummer.github.io/peel-js/" target="_blank" rel="noreferrer">Peel.js</a>，
+      源码在 <code>public/demos/lib/</code>。悬停从右下角揭开；写完的点进去还是原来的文章。
+      翻书库（StPageFlip / turn.js）是整本翻页，不适合一张便签。WebGL 的 paperlab / webgl-page-curl 更真，但太重。
+    </aside>
+  </div>
+
+  <script src="./lib/peel.js"></script>
+  <script>
+    const root = document.documentElement;
+    const buttons = [...document.querySelectorAll(".font-switch button")];
+    function setFont(name) {
+      root.dataset.font = name;
+      buttons.forEach((btn) => btn.setAttribute("aria-pressed", String(btn.dataset.font === name)));
+      try { localStorage.setItem("sticky-wall-font", name); } catch {}
+    }
+    buttons.forEach((btn) => btn.addEventListener("click", () => setFont(btn.dataset.font)));
+    try {
+      const saved = localStorage.getItem("sticky-wall-font");
+      if (saved && buttons.some((btn) => btn.dataset.font === saved)) setFont(saved);
+      else setFont("sans");
+    } catch { setFont("sans"); }
+
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = src;
+        s.onload = () => resolve(src);
+        s.onerror = () => reject(src);
+        document.head.appendChild(s);
+      });
+    }
+
+    async function ensurePeel() {
+      if (window.Peel) return true;
+      const urls = ["./lib/peel.js", "/demos/lib/peel.js", "lib/peel.js"];
+      for (const url of urls) {
+        try {
+          await loadScript(url);
+          if (window.Peel) return true;
+        } catch {}
+      }
+      return false;
+    }
+
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function animatePath(peel, from, to, ms) {
+      const start = performance.now();
+      if (peel._raf) cancelAnimationFrame(peel._raf);
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / ms);
+        const v = from + (to - from) * easeOut(t);
+        peel.setTimeAlongPath(v);
+        if (t < 1) peel._raf = requestAnimationFrame(step);
+      };
+      peel._raf = requestAnimationFrame(step);
+    }
+
+    function bindNote(el) {
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const peel = new Peel(el, {
+        corner: Peel.Corners.BOTTOM_RIGHT,
+        backReflection: true,
+        topShadow: true,
+        bottomShadow: true,
+        setPeelOnInit: false,
+        dragPreventsDefault: false,
+      });
+
+      function layout() {
+        peel.setupDimensions();
+        peel.setCorner(Peel.Corners.BOTTOM_RIGHT);
+        const w = peel.width || el.offsetWidth;
+        const h = peel.height || el.offsetHeight;
+        peel.setPeelPath(Math.max(w - 2, 1), Math.max(h - 2, 1), w - 110, h - 90);
+      }
+
+      layout();
+      peel.setTimeAlongPath(0);
+      el.classList.add("peel-ready");
+
+      let inside = false;
+      const open = () => {
+        if (inside) return;
+        inside = true;
+        layout();
+        const from = typeof peel.timeAlongPath === "number" ? peel.timeAlongPath : 0;
+        if (reduce) peel.setTimeAlongPath(1);
+        else animatePath(peel, from, 1, 460);
+      };
+      const close = () => {
+        if (!inside) return;
+        inside = false;
+        const from = typeof peel.timeAlongPath === "number" ? peel.timeAlongPath : 1;
+        if (reduce) peel.setTimeAlongPath(0);
+        else animatePath(peel, from, 0, 400);
+      };
+
+      el.addEventListener("mouseenter", open);
+      el.addEventListener("mouseleave", close);
+      el.addEventListener("pointerenter", open);
+      el.addEventListener("pointerleave", close);
+      el.addEventListener("focusin", open);
+      el.addEventListener("focusout", close);
+    }
+
+    function useFallback() {
+      document.querySelectorAll(".note.peel").forEach((el) => {
+        el.classList.add("peel-fallback", "peel-ready");
+      });
+    }
+
+    async function boot() {
+      const ok = await ensurePeel();
+      if (!ok || !window.Peel || !Peel.supported) {
+        useFallback();
+        return;
+      }
+      document.querySelectorAll(".note.peel").forEach(bindNote);
+    }
+
+    if (document.readyState === "complete") boot();
+    else window.addEventListener("load", boot);
+  </script>
+</body>
+</html>
